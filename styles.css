@@ -1,19 +1,28 @@
 :root {
-    --color-bg: #fcfcfc; /* Fundo off-white, super limpo e elegante */
+    --color-bg: #faf9f8;
+    /* Fluent Gray 10 background */
     --color-surface: #ffffff;
-    --color-text-primary: #111111; /* Preto profundo, baseado na logo */
-    --color-text-secondary: #555555; /* Cinza para textos secundários */
-    --color-accent: #ff6600; /* Laranja vibrante da logo FWC */
-    --color-accent-hover: #e65c00; /* Laranja um pouco mais escuro para interações */
-    
+    --color-header: rgba(255, 255, 255, 0.85);
+    /* Fluent Acrylic Header */
+    --color-text-primary: #323130;
+    /* Fluent Dark Gray */
+    --color-text-secondary: #605e5c;
+    /* Fluent Neutral Secondary */
+    --color-accent: #ff6600;
+    /* Laranja vibrante da logo FWC */
+    --color-accent-hover: #e65c00;
+    /* Laranja um pouco mais escuro para interações */
+
     --font-primary: 'Outfit', sans-serif;
-    
+
     --spacing-sm: 1rem;
     --spacing-md: 2.5rem;
     --spacing-lg: 5rem;
     --spacing-xl: 10rem;
-    
-    --radius-md: 12px;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --border-subtle: 1px solid #edebe9;
 }
 
 * {
@@ -36,8 +45,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md) 5%;
-    background-color: var(--color-bg);
+    padding: 1.5rem 5%;
+    background-color: var(--color-header);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: var(--border-subtle);
 }
 
 .logo {
@@ -71,7 +86,9 @@ body {
 }
 
 /* Typography Leads */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     line-height: 1.1;
     letter-spacing: -0.03em;
 }
@@ -85,20 +102,20 @@ p {
 /* Buttons */
 .btn-primary {
     display: inline-block;
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.5rem;
     background-color: var(--color-accent);
     color: white;
     text-decoration: none;
-    font-weight: 500;
-    border-radius: 50px;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);
 }
 
 .btn-primary:hover {
     background-color: var(--color-accent-hover);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transform: scale(1.02);
+    box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,0.132), 0 0.6px 1.8px 0 rgba(0,0,0,0.108);
 }
 
 .link-arrow {
@@ -200,13 +217,14 @@ p {
     background: var(--color-surface);
     padding: 1.5rem;
     border-radius: var(--radius-md);
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+    border: var(--border-subtle);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);
 }
 
 .product-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,0.132), 0 1.2px 3.6px 0 rgba(0,0,0,0.108);
 }
 
 .product-image-placeholder {
@@ -222,11 +240,11 @@ p {
 }
 
 .product-image-placeholder img {
-    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: transform 0.4s ease-in-out;
 }
 
 .product-card:hover .product-image-placeholder img {
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
 .product-info h3 {
@@ -287,7 +305,7 @@ p {
 .footer-bottom {
     max-width: 1200px;
     margin: 0 auto;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: var(--spacing-md);
     text-align: center;
     font-size: 0.875rem;
@@ -324,14 +342,16 @@ p {
     margin-bottom: 2px;
 }
 
-.fwc-f, .fwc-c {
+.fwc-f,
+.fwc-c {
     color: #000000;
 }
 
 .fwc-w {
-    color: #ff6600; /* Laranja da logo */
+    color: #ff6600;
+    /* Laranja da logo */
     position: relative;
-    text-shadow: 2px 2px 0px rgba(0,0,0,1);
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
     margin: 0 -2px;
 }
 
@@ -344,9 +364,12 @@ p {
 }
 
 /* Footer mode (Inverted colors for dark background) */
-.footer-mode .fwc-f, .footer-mode .fwc-c, .footer-mode .fwc-subtext {
+.footer-mode .fwc-f,
+.footer-mode .fwc-c,
+.footer-mode .fwc-subtext {
     color: #ffffff;
 }
+
 .footer-mode .fwc-w {
-    text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
 }
