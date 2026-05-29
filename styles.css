@@ -427,87 +427,51 @@ p {
     width: 100%;
 }
 
-.video-browser-mockup {
-    background: #151518;
+.video-player-card {
+    position: relative;
+    background: #000;
     border-radius: var(--radius-md);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8),
                 0 0 50px -10px rgba(255, 102, 0, 0.12);
     overflow: hidden;
     width: 100%;
+    aspect-ratio: 16/9;
     transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
                 box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.video-browser-mockup:hover {
-    transform: translateY(-8px) scale(1.02);
+.video-player-card:hover {
+    transform: translateY(-8px) scale(1.015);
     box-shadow: 0 45px 90px -20px rgba(0, 0, 0, 0.9),
                 0 0 60px -5px rgba(255, 102, 0, 0.22);
 }
 
-.mockup-header {
-    height: 44px;
-    background: #1e1e22;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    position: relative;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.mockup-dots {
-    display: flex;
-    gap: 8px;
-    z-index: 2;
-}
-
-.mockup-dots .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-}
-
-.mockup-dots .dot.red { background: #ff5f56; }
-.mockup-dots .dot.yellow { background: #ffbd2e; }
-.mockup-dots .dot.green { background: #27c93f; }
-
-.mockup-address-bar {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #141417;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.65);
-    padding: 6px 24px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    min-width: 240px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-family: var(--font-primary), system-ui, -apple-system, sans-serif;
-    letter-spacing: 0.02em;
-}
-
-.mockup-content {
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
-    background: #000;
-}
-
-.mockup-content video {
-    position: absolute;
-    top: 0;
-    left: 0;
+.video-player-card video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+.video-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 10;
+    background: rgba(15, 15, 18, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
 }
 
 @media (max-width: 992px) {
