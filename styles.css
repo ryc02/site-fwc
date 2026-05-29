@@ -124,7 +124,16 @@ p {
 
 /* Hero Section */
 .hero {
+    position: relative;
     padding: var(--spacing-xl) 5% var(--spacing-lg);
+    background-image: linear-gradient(to right, rgba(253, 253, 253, 1) 0%, rgba(253, 253, 253, 0.85) 60%, rgba(253, 253, 253, 0.4) 100%), url('hero-bg.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -134,12 +143,59 @@ p {
     font-weight: 300;
     margin-bottom: 1.5rem;
     color: var(--color-text-primary);
+    max-width: 800px;
 }
 
 .hero-subtitle {
     font-size: clamp(1.25rem, 2vw, 1.5rem);
     margin-bottom: 3rem;
-    max-width: 800px;
+    max-width: 600px;
+}
+
+/* Features Section */
+.features-section {
+    padding: var(--spacing-lg) 5%;
+    background-color: var(--color-surface);
+}
+
+.features-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+}
+
+.feature-item {
+    text-align: center;
+    padding: 2rem;
+    background: var(--color-surface-variant);
+    border-radius: var(--radius-md);
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: var(--color-accent);
+    margin-bottom: 1.5rem;
+}
+
+.feature-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+}
+
+.feature-item p {
+    font-size: 1rem;
+    margin: 0 auto;
 }
 
 /* Content Section */
