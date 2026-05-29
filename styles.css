@@ -367,55 +367,7 @@ p {
     transform: translateY(0);
 }
 
-/* FWC Logo */
-.fwc-logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-}
 
-.fwc-letters {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 3rem;
-    font-weight: 900;
-    font-style: italic;
-    letter-spacing: -2px;
-    margin-bottom: 2px;
-}
-
-.fwc-f,
-.fwc-c {
-    color: #000000;
-}
-
-.fwc-w {
-    color: #ff6600;
-    /* Laranja da logo */
-    position: relative;
-    text-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
-    margin: 0 -2px;
-}
-
-.fwc-subtext {
-    font-family: Arial, sans-serif;
-    font-size: 0.55rem;
-    font-weight: 700;
-    color: #000000;
-    letter-spacing: 0.5px;
-}
-
-/* Footer mode (Inverted colors for dark background) */
-.footer-mode .fwc-f,
-.footer-mode .fwc-c,
-.footer-mode .fwc-subtext {
-    color: #ffffff;
-}
-
-.footer-mode .fwc-w {
-    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
-}
 
 /* Sticky Bottom Bar (Thumb-driven design for Mobile) */
 .sticky-bottom-bar {
