@@ -124,11 +124,9 @@ p {
 
 /* Hero Section */
 .hero {
-    position: relative;
     padding: var(--spacing-xl) 5% var(--spacing-lg);
-    background-image: linear-gradient(to right, rgba(253, 253, 253, 1) 0%, rgba(253, 253, 253, 0.85) 60%, rgba(253, 253, 253, 0.4) 100%), url('hero-bg.png');
-    background-size: cover;
-    background-position: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .hero-content {
