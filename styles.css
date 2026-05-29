@@ -476,18 +476,21 @@ p {
     left: 50%;
     transform: translateX(-50%);
     background: #141417;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
-    padding: 4px 24px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 6px 24px;
     border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    min-width: 220px;
-    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    min-width: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: monospace;
-    opacity: 0.8;
+    font-family: var(--font-primary), system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.02em;
 }
 
 .mockup-content {
