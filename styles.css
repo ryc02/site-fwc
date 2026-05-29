@@ -1,28 +1,24 @@
 :root {
-    --color-bg: #faf9f8;
-    /* Fluent Gray 10 background */
+    --color-bg: #fdfdfd;
     --color-surface: #ffffff;
-    --color-header: rgba(255, 255, 255, 0.85);
-    /* Fluent Acrylic Header */
-    --color-text-primary: #323130;
-    /* Fluent Dark Gray */
-    --color-text-secondary: #605e5c;
-    /* Fluent Neutral Secondary */
+    --color-surface-variant: #f4f4f5;
+    --color-header: #dadada;
+    --color-text-primary: #1f1f1f;
+    --color-text-secondary: #444746;
     --color-accent: #ff6600;
-    /* Laranja vibrante da logo FWC */
-    --color-accent-hover: #e65c00;
-    /* Laranja um pouco mais escuro para interações */
+    --color-accent-hover: #e05a00;
 
-    --font-primary: 'Outfit', sans-serif;
+    --font-primary: 'Roboto', sans-serif;
 
     --spacing-sm: 1rem;
     --spacing-md: 2.5rem;
     --spacing-lg: 5rem;
     --spacing-xl: 10rem;
 
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --border-subtle: 1px solid #edebe9;
+    --radius-md: 16px;
+    
+    --elevation-1: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15);
+    --elevation-2: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 2px 6px 2px rgba(0,0,0,0.15);
 }
 
 * {
@@ -45,14 +41,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 5%;
+    padding: var(--spacing-md) 5%;
     background-color: var(--color-header);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    border-bottom: var(--border-subtle);
 }
 
 .logo {
@@ -102,20 +92,20 @@ p {
 /* Buttons */
 .btn-primary {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
+    padding: 10px 24px;
     background-color: var(--color-accent);
     color: white;
     text-decoration: none;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);
+    font-weight: 500;
+    border-radius: 100px;
+    transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s;
+    box-shadow: var(--elevation-1);
+    letter-spacing: 0.1px;
 }
 
 .btn-primary:hover {
     background-color: var(--color-accent-hover);
-    transform: scale(1.02);
-    box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,0.132), 0 0.6px 1.8px 0 rgba(0,0,0,0.108);
+    box-shadow: var(--elevation-2);
 }
 
 .link-arrow {
@@ -215,36 +205,35 @@ p {
 
 .product-card {
     background: var(--color-surface);
-    padding: 1.5rem;
+    padding: 16px;
     border-radius: var(--radius-md);
-    border: var(--border-subtle);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);
+    transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    box-shadow: var(--elevation-1);
 }
 
 .product-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,0.132), 0 1.2px 3.6px 0 rgba(0,0,0,0.108);
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-2);
 }
 
 .product-image-placeholder {
     width: 100%;
     aspect-ratio: 4/3;
-    background-color: var(--color-bg);
-    border-radius: var(--radius-md);
+    background-color: var(--color-surface-variant);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .product-image-placeholder img {
-    transition: transform 0.4s ease-in-out;
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .product-card:hover .product-image-placeholder img {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
 .product-info h3 {
