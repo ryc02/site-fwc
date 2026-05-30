@@ -462,11 +462,7 @@ p {
     font-weight: 300;
     margin-bottom: 1.5rem;
     max-width: 800px;
-    background: linear-gradient(135deg, #1f1f1f 30%, #ff6600 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: inline-block;
+    color: var(--color-text-primary);
 }
 
 .hero-subtitle {
@@ -545,11 +541,7 @@ p {
 .section-heading {
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 400;
-    background: linear-gradient(135deg, #1f1f1f 35%, #ff6600 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: inline-block;
+    color: var(--color-text-primary);
 }
 
 .content-grid {
@@ -579,19 +571,11 @@ p {
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 400;
     margin-bottom: 1rem;
-    background: linear-gradient(135deg, #1f1f1f 35%, #ff6600 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: inline-block;
+    color: var(--color-text-primary);
 }
 
 .products-section > h3 {
-    background: linear-gradient(135deg, #1f1f1f 40%, #ff6600 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    display: inline-block !important;
+    color: var(--color-text-primary) !important;
 }
 
 .carousel-wrapper {
@@ -779,11 +763,7 @@ p {
     line-height: 1.2;
     margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #ffffff 40%, #ff7315 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: inline-block;
+    color: #ffffff;
 }
 
 .video-desc {
