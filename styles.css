@@ -53,11 +53,13 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-md) 5%;
-    background: linear-gradient(135deg, #ffffff 0%, #fff3ea 45%, #ffd4b8 100%);
+    background: linear-gradient(-45deg, #ffffff, #fff5ee, #ffdcc7, #ffeae0);
+    background-size: 400% 400%;
     position: relative;
     overflow: hidden;
     border-bottom: 2px solid rgba(255, 102, 0, 0.12);
-    animation: borderGlow 6s ease-in-out infinite;
+    animation: shiftGradient 12s ease infinite, 
+               borderGlow 6s ease-in-out infinite;
 }
 
 .header::before {
@@ -196,6 +198,26 @@ body {
     }
 }
 
+@keyframes shiftGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.header-logo-link {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.header-logo-link:hover {
+    transform: scale(1.04);
+}
+
 .logo {
     font-size: 1.25rem;
     font-weight: 700;
@@ -214,11 +236,29 @@ body {
     color: var(--color-text-primary);
     font-weight: 500;
     font-size: 0.95rem;
+    position: relative;
+    padding-bottom: 4px;
     transition: color 0.3s ease;
+}
+
+.nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease, left 0.3s ease;
 }
 
 .nav a:hover {
     color: var(--color-accent);
+}
+
+.nav a:hover::after {
+    width: 100%;
+    left: 0;
 }
 
 .nav .nav-cta {
