@@ -823,6 +823,37 @@ p {
 }
 
 @media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 1.25rem;
+        padding: 1.25rem 5% 1rem;
+        align-items: center;
+    }
+
+    .header-logo-link {
+        height: 48px !important;
+        justify-content: center !important;
+    }
+
+    .header-logo-link img {
+        height: 144px !important;
+    }
+
+    .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.25rem;
+        width: 100%;
+    }
+
+    .nav a {
+        font-size: 0.875rem;
+    }
+
+    .hero {
+        padding: 4rem 5% 3rem;
+    }
+
     .sticky-bottom-bar {
         display: flex;
     }
