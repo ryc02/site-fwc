@@ -8,7 +8,8 @@
     --color-accent: #ff6600;
     --color-accent-hover: #e05a00;
 
-    --font-primary: 'Roboto', sans-serif;
+    --font-primary: 'Inter', sans-serif;
+    --font-heading: 'Outfit', sans-serif;
 
     --spacing-sm: 1rem;
     --spacing-md: 2.5rem;
@@ -269,8 +270,12 @@ body {
 /* Typography Leads */
 h1,
 h2,
-h3 {
-    line-height: 1.1;
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    line-height: 1.15;
     letter-spacing: -0.03em;
 }
 
@@ -345,8 +350,12 @@ p {
     font-size: clamp(3rem, 6vw, 5.5rem);
     font-weight: 300;
     margin-bottom: 1.5rem;
-    color: var(--color-text-primary);
     max-width: 800px;
+    background: linear-gradient(135deg, #1f1f1f 30%, #ff6600 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
 }
 
 .hero-subtitle {
@@ -425,6 +434,11 @@ p {
 .section-heading {
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 400;
+    background: linear-gradient(135deg, #1f1f1f 35%, #ff6600 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
 }
 
 .content-grid {
@@ -454,6 +468,19 @@ p {
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 400;
     margin-bottom: 1rem;
+    background: linear-gradient(135deg, #1f1f1f 35%, #ff6600 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+}
+
+.products-section > h3 {
+    background: linear-gradient(135deg, #1f1f1f 40%, #ff6600 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    display: inline-block !important;
 }
 
 .carousel-wrapper {
@@ -637,10 +664,14 @@ p {
 .video-title {
     font-size: clamp(2.25rem, 4vw, 3rem);
     font-weight: 400;
-    color: #ffffff;
     line-height: 1.2;
     margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 40%, #ff7315 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
 }
 
 .video-desc {
@@ -760,6 +791,11 @@ p {
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 300;
     margin-bottom: 1rem;
+    background: linear-gradient(135deg, #1f1f1f 35%, #ff6600 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
 }
 
 .cta-section p {
