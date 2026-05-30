@@ -53,7 +53,88 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-md) 5%;
-    background-color: var(--color-header);
+    background: linear-gradient(135deg, #ffffff 0%, #fff3ea 45%, #ffd4b8 100%);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 2px solid rgba(255, 102, 0, 0.12);
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: -150px;
+    right: -50px;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    border: 45px solid rgba(255, 102, 0, 0.08);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -100px;
+    width: 550px;
+    height: 550px;
+    border-radius: 50%;
+    border: 20px solid rgba(255, 102, 0, 0.05);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.header > a,
+.header > nav {
+    position: relative;
+    z-index: 2;
+}
+
+.header-sparkles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.8;
+}
+
+.header-sparkles::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 
+        120px 15px 4px 1px rgba(255, 255, 255, 0.9),
+        240px 35px 5px 0px rgba(255, 255, 255, 0.95),
+        380px 12px 3px 2px rgba(255, 255, 255, 0.8),
+        500px 30px 5px 0px rgba(255, 255, 255, 0.95),
+        680px 10px 4px 1px rgba(255, 255, 255, 0.9),
+        820px 38px 3px 0px rgba(255, 255, 255, 0.95),
+        950px 18px 5px 2px rgba(255, 255, 255, 0.8);
+    filter: blur(0.5px);
+}
+
+.header-sparkles::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 102, 0, 0.2);
+    border-radius: 50%;
+    box-shadow: 
+        160px 30px 6px 1px rgba(255, 102, 0, 0.3),
+        300px 12px 8px 0px rgba(255, 102, 0, 0.4),
+        480px 35px 7px 2px rgba(255, 102, 0, 0.3),
+        620px 18px 6px 0px rgba(255, 102, 0, 0.4),
+        780px 25px 8px 1px rgba(255, 102, 0, 0.3),
+        900px 12px 7px 0px rgba(255, 102, 0, 0.4);
+    filter: blur(1px);
 }
 
 .logo {
