@@ -35,4 +35,57 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.fade-in').forEach(element => {
         observer.observe(element);
     });
+
+    // Carousel navigation
+    document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
+        const showcase = wrapper.querySelector('.product-showcase');
+        const prevBtn = wrapper.querySelector('.prev-btn');
+        const nextBtn = wrapper.querySelector('.next-btn');
+
+        if (!showcase || !prevBtn || !nextBtn) return;
+
+        // Scroll amount: scroll by the width of one card + gap
+        const scrollAmount = 355; 
+
+        nextBtn.addEventListener('click', () => {
+            showcase.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        });
+
+        prevBtn.addEventListener('click', () => {
+            showcase.scrollBy({
+                left: -scrollAmount,
+                behavior: 'smooth'
+            });
+        });
+
+        // Hide/show buttons based on scroll position
+        const toggleButtons = () => {
+            const scrollLeft = showcase.scrollLeft;
+            const maxScrollLeft = showcase.scrollWidth - showcase.clientWidth;
+            
+            // Show/hide prev button
+            if (scrollLeft <= 5) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+
+            // Show/hide next button
+            if (scrollLeft >= maxScrollLeft - 5) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+            }
+        };
+
+        // Initial toggle and add scroll listener
+        toggleButtons();
+        showcase.addEventListener('scroll', toggleButtons);
+        
+        // Handle window resize (re-calculate max scroll)
+        window.addEventListener('resize', toggleButtons);
+    });
 });
