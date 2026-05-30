@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 frequency: 0.003,
                 linesCount: 6,
                 spacing: 15,
-                color: (opacity) => `rgba(255, 255, 255, ${opacity * 0.75})`,
+                color: (opacity) => `rgba(255, 102, 0, ${opacity * 0.20})`,
                 phase: Math.PI / 3
             },
             {
