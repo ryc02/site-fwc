@@ -88,4 +88,142 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle window resize (re-calculate max scroll)
         window.addEventListener('resize', toggleButtons);
     });
+
+    // Interactive Canvas Background (Hero Section)
+    const initHeroCanvas = () => {
+        const canvas = document.getElementById('hero-canvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const heroSection = canvas.parentElement;
+
+        let width = canvas.width = heroSection.offsetWidth;
+        let height = canvas.height = heroSection.offsetHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = heroSection.offsetWidth;
+            height = canvas.height = heroSection.offsetHeight;
+        });
+
+        const mouse = {
+            x: -1000,
+            y: -1000,
+            targetX: -1000,
+            targetY: -1000,
+            radius: 200,
+            active: false
+        };
+
+        const onMouseMove = (e) => {
+            const rect = heroSection.getBoundingClientRect();
+            mouse.targetX = e.clientX - rect.left;
+            mouse.targetY = e.clientY - rect.top;
+            mouse.active = true;
+        };
+
+        const onMouseLeave = () => {
+            mouse.targetX = -1000;
+            mouse.targetY = -1000;
+            mouse.active = false;
+        };
+
+        heroSection.addEventListener('mousemove', onMouseMove);
+        heroSection.addEventListener('mouseleave', onMouseLeave);
+
+        const ribbons = [
+            {
+                yBase: 0.5,
+                speed: 0.002,
+                amplitude: 45,
+                frequency: 0.0025,
+                linesCount: 8,
+                spacing: 12,
+                color: (opacity) => `rgba(255, 102, 0, ${opacity * 0.18})`,
+                phase: 0
+            },
+            {
+                yBase: 0.45,
+                speed: -0.0015,
+                amplitude: 35,
+                frequency: 0.003,
+                linesCount: 6,
+                spacing: 15,
+                color: (opacity) => `rgba(255, 255, 255, ${opacity * 0.75})`,
+                phase: Math.PI / 3
+            },
+            {
+                yBase: 0.55,
+                speed: 0.0025,
+                amplitude: 55,
+                frequency: 0.002,
+                linesCount: 5,
+                spacing: 18,
+                color: (opacity) => `rgba(255, 102, 0, ${opacity * 0.22})`,
+                phase: Math.PI / 1.5
+            }
+        ];
+
+        const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
+
+        const animate = () => {
+            ctx.clearRect(0, 0, width, height);
+
+            if (mouse.active) {
+                if (mouse.x === -1000) {
+                    mouse.x = mouse.targetX;
+                    mouse.y = mouse.targetY;
+                } else {
+                    mouse.x = lerp(mouse.x, mouse.targetX, 0.08);
+                    mouse.y = lerp(mouse.y, mouse.targetY, 0.08);
+                }
+            } else {
+                mouse.x = lerp(mouse.x, -1000, 0.08);
+                mouse.y = lerp(mouse.y, -1000, 0.08);
+            }
+
+            ribbons.forEach(ribbon => {
+                ribbon.phase += ribbon.speed;
+
+                for (let i = 0; i < ribbon.linesCount; i++) {
+                    ctx.beginPath();
+                    
+                    const offset = (i - ribbon.linesCount / 2) * ribbon.spacing;
+                    const lineOpacity = 1 - Math.abs(i - ribbon.linesCount / 2) / (ribbon.linesCount / 2 + 1);
+
+                    for (let x = 0; x < width; x += 10) {
+                        let y = height * ribbon.yBase + Math.sin(x * ribbon.frequency + ribbon.phase) * ribbon.amplitude + offset;
+
+                        if (mouse.x !== -1000) {
+                            const dx = x - mouse.x;
+                            const dy = y - mouse.y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+
+                            if (dist < mouse.radius) {
+                                const force = (mouse.radius - dist) / mouse.radius;
+                                const smoothForce = force * force * (3 - 2 * force);
+                                const angle = Math.atan2(dy, dx);
+                                y += Math.sin(angle) * smoothForce * 60;
+                            }
+                        }
+
+                        if (x === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    }
+
+                    ctx.strokeStyle = ribbon.color(lineOpacity);
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+            });
+
+            requestAnimationFrame(animate);
+        };
+
+        requestAnimationFrame(animate);
+    };
+
+    initHeroCanvas();
 });
