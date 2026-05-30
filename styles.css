@@ -1,10 +1,10 @@
 :root {
     --color-bg: #fdfdfd;
     --color-surface: #ffffff;
-    --color-surface-variant: #f4f4f5;
+    --color-surface-variant: #F0F4F8; /* Soft petrol-tinted grey */
     --color-header: #dadada;
-    --color-text-primary: #1f1f1f;
-    --color-text-secondary: #444746;
+    --color-text-primary: #16212D; /* Very dark petrol instead of black */
+    --color-text-secondary: #4A5A6A; /* Muted petrol instead of grey */
     --color-accent: #ff6600;
     --color-accent-hover: #e05a00;
     --color-petrol: #1A2B3C;
@@ -41,7 +41,7 @@ body {
 
 /* Announcement Bar */
 .announcement-bar {
-    background-color: var(--color-accent);
+    background-color: var(--color-petrol);
     color: var(--color-surface);
     text-align: center;
     padding: 10px 15px;
@@ -442,10 +442,10 @@ p {
     transition: all 0.3s ease;
 }
 .nav-pill:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--color-petrol);
+    color: var(--color-petrol);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(26, 43, 60, 0.15);
 }
 .pill-icon {
     font-size: 1.1rem;
