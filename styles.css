@@ -390,30 +390,7 @@ p {
     font-size: 1.1rem;
 }
 
-/* Product Badges */
-.product-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #ffffff;
-    z-index: 2;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-.badge-orange {
-    background-color: #ee4d2d; /* Shopee orange */
-}
-.badge-green {
-    background-color: #00b14f; /* Professional green */
-}
+
 .hero-content {
     position: relative;
     z-index: 2;
