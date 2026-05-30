@@ -226,4 +226,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     initHeroCanvas();
+
+    // Reading Progress Bar
+    const initScrollProgress = () => {
+        const progressBar = document.getElementById('scroll-progress-bar');
+        if (!progressBar) return;
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+            progressBar.style.width = scrollPercent + '%';
+        });
+    };
+
+    initScrollProgress();
 });

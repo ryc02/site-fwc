@@ -820,7 +820,25 @@ p {
     transform: translateY(0);
 }
 
+/* Reading Progress Bar */
+.scroll-progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: transparent;
+    z-index: 10000;
+    pointer-events: none;
+}
 
+#scroll-progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: var(--color-accent);
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
+    transition: width 0.1s ease-out;
+}
 
 /* Sticky Bottom Bar (Thumb-driven design for Mobile) */
 .sticky-bottom-bar {
