@@ -329,6 +329,7 @@ p {
     background: linear-gradient(135deg, #ffffff 0%, #fff6f0 50%, #ffece0 100%);
 }
 
+/* Hero Particles */
 #hero-canvas {
     position: absolute;
     top: 0;
@@ -337,8 +338,82 @@ p {
     height: 100%;
     z-index: 1;
     pointer-events: none;
+    opacity: 0.6;
+    mix-blend-mode: screen;
 }
 
+/* Navigation Pills */
+.nav-pills-section {
+    padding: 1.5rem 5%;
+    background: transparent;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+}
+.nav-pills-section::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+.nav-pills-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    min-width: max-content;
+}
+@media (max-width: 768px) {
+    .nav-pills-container {
+        justify-content: flex-start;
+        padding: 0.5rem 0;
+    }
+}
+.nav-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: #ffffff;
+    border: 1px solid var(--color-surface-variant);
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+.nav-pill:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.15);
+}
+.pill-icon {
+    font-size: 1.1rem;
+}
+
+/* Product Badges */
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.badge-orange {
+    background: linear-gradient(135deg, #ff8a00 0%, #e52e71 100%);
+}
+.badge-green {
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+}
 .hero-content {
     position: relative;
     z-index: 2;
@@ -581,6 +656,7 @@ p {
     justify-content: center;
     overflow: hidden;
     margin-bottom: 1rem;
+    position: relative;
 }
 
 .product-image-placeholder img {
