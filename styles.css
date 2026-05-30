@@ -203,21 +203,19 @@ body {
 .highlight-word {
     background: linear-gradient(
         120deg,
-        var(--color-accent) 0%,
-        var(--color-accent) 30%,
-        #ffd700 45%,
-        #ffffff 50%,
-        #ffd700 55%,
-        var(--color-accent) 70%,
-        var(--color-accent) 100%
+        #ffb84d 0%,
+        #ff9900 30%,
+        #ffffff 45%,
+        #ffffff 55%,
+        #ff9900 70%,
+        #ffb84d 100%
     );
     background-size: 200% auto;
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
     animation: hoyo-shimmer 4s infinite linear;
-    display: inline-block;
-    padding-right: 2px;
+    display: inline;
 }
 
 @keyframes hoyo-shimmer {
