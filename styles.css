@@ -7,8 +7,8 @@
     --color-text-secondary: #444746;
     --color-accent: #ff6600;
     --color-accent-hover: #e05a00;
-    --color-success: #007A5E;
-    --color-success-bg: #E8F5F2;
+    --color-petrol: #1A2B3C;
+    --color-petrol-light: #2C3E50;
 
     --font-primary: 'Inter', sans-serif;
     --font-heading: 'Outfit', sans-serif;
@@ -504,7 +504,7 @@ p {
 
 .feature-icon {
     font-size: 3rem;
-    color: var(--color-success);
+    color: var(--color-accent);
     margin-bottom: 1.5rem;
 }
 
@@ -706,7 +706,7 @@ p {
 /* Video Section & Browser Mockup */
 .video-section {
     padding: var(--spacing-xl) 5%;
-    background-color: #0c0c0e;
+    background-color: var(--color-petrol);
     color: #ffffff;
     position: relative;
     overflow: hidden;
@@ -798,7 +798,7 @@ p {
 
 .benefit-icon {
     font-size: 1.85rem;
-    color: var(--color-success);
+    color: var(--color-accent);
     flex-shrink: 0;
     margin-top: 2px;
 }
@@ -907,7 +907,7 @@ p {
 /* Footer */
 .footer {
     padding: var(--spacing-lg) 5% var(--spacing-md);
-    background-color: var(--color-text-primary);
+    background-color: var(--color-petrol-light);
     color: var(--color-surface);
 }
 
