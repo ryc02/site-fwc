@@ -160,79 +160,19 @@ function rebuildModel() {
     }
 
     if (currentBackground === 'wall') {
-        // Parede (Plano de Fundo)
-        const wallGeo = new THREE.PlaneGeometry(15, 10);
-        // Cor levemente off-white/bege claro para aquecer o ambiente
-        const wallMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f0, roughness: 1.0, metalness: 0.0 });
+        // Parede de Fundo Lisa e Elegante (Estilo Studio Arquitetônico)
+        const wallGeo = new THREE.PlaneGeometry(30, 20);
+        // Cor de parede de luxo (cinza quente / off-white)
+        const wallMat = new THREE.MeshStandardMaterial({ 
+            color: 0xf0ece1, 
+            roughness: 1.0, 
+            metalness: 0.0 
+        });
         const wall = new THREE.Mesh(wallGeo, wallMat);
+        // Posiciona a parede exatamente onde a base do suporte encosta
         wall.position.z = -0.08 - currentDiameter;
         wall.receiveShadow = true;
         varaoGroup.add(wall);
-
-        // Rodapé (Baseboard) para dar escala e realismo ao "chão"
-        const baseboardGeo = new THREE.BoxGeometry(15, 0.15, 0.02);
-        const baseboardMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 });
-        const baseboard = new THREE.Mesh(baseboardGeo, baseboardMat);
-        baseboard.position.set(0, -1.85, wall.position.z + 0.01); // 1.85m abaixo do varão
-        baseboard.receiveShadow = true;
-        varaoGroup.add(baseboard);
-
-        // Medidas da Janela
-        const windowWidth = Math.max(0.5, currentLength - 0.4); // Largura real da janela
-        const windowHeight = 1.6;
-        const windowY = -windowHeight / 2 - 0.1; // Fica 10cm abaixo do varão
-        const windowZ = wall.position.z + 0.005;
-
-        // Vidro Escuro da Janela -> Agora com fundo de paisagem
-        const textureLoader = new THREE.TextureLoader();
-        // Imagem de céu/natureza do Unsplash (CORS enabled)
-        const windowBgTexture = textureLoader.load('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1024&q=80');
-        windowBgTexture.colorSpace = THREE.SRGBColorSpace;
-
-        const glassGeo = new THREE.PlaneGeometry(windowWidth, windowHeight);
-        // MeshBasicMaterial para parecer iluminado (luz do sol de fora)
-        const glassMat = new THREE.MeshBasicMaterial({ 
-            map: windowBgTexture,
-            color: 0xdddddd // Levemente escurecido para não ofuscar o varão
-        });
-        
-        const glass = new THREE.Mesh(glassGeo, glassMat);
-        glass.position.set(0, windowY, windowZ);
-        // Remove receiveShadow para não ficar escuro
-        varaoGroup.add(glass);
-
-        // Esquadria / Moldura Branca (Frame da Janela)
-        const frameThickness = 0.06;
-        const frameMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
-        
-        // Bordas horizontais (Cima e Baixo)
-        const frameHorizGeo = new THREE.BoxGeometry(windowWidth + frameThickness*2, frameThickness, 0.03);
-        const frameTop = new THREE.Mesh(frameHorizGeo, frameMat);
-        frameTop.position.set(0, windowY + windowHeight/2 + frameThickness/2, windowZ + 0.01);
-        frameTop.receiveShadow = true;
-        varaoGroup.add(frameTop);
-        
-        const frameBot = new THREE.Mesh(frameHorizGeo, frameMat);
-        frameBot.position.set(0, windowY - windowHeight/2 - frameThickness/2, windowZ + 0.01);
-        frameBot.receiveShadow = true;
-        varaoGroup.add(frameBot);
-
-        // Bordas verticais (Esquerda, Direita e Divisória Central)
-        const frameVertGeo = new THREE.BoxGeometry(frameThickness, windowHeight, 0.03);
-        const frameLeft = new THREE.Mesh(frameVertGeo, frameMat);
-        frameLeft.position.set(-windowWidth/2 - frameThickness/2, windowY, windowZ + 0.01);
-        frameLeft.receiveShadow = true;
-        varaoGroup.add(frameLeft);
-        
-        const frameRight = new THREE.Mesh(frameVertGeo, frameMat);
-        frameRight.position.set(windowWidth/2 + frameThickness/2, windowY, windowZ + 0.01);
-        frameRight.receiveShadow = true;
-        varaoGroup.add(frameRight);
-        
-        const frameCenter = new THREE.Mesh(frameVertGeo, frameMat);
-        frameCenter.position.set(0, windowY, windowZ + 0.01); // Divisória central das duas folhas de vidro
-        frameCenter.receiveShadow = true;
-        varaoGroup.add(frameCenter);
     }
 
     // Ajusta a câmera para focar no varão inteiro
