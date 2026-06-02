@@ -184,7 +184,7 @@ function calcularMedida() {
 
         // Cálculo padrão: Largura da janela + 20cm de cada lado (total + 40cm)
         const ideal = janela + 0.4;
-        textVarao.innerText = ideal.toFixed(2) + 'm';
+        textVarao.innerText = ideal.toFixed(2) + 'mt';
         
         // Lógica de suportes e emendas
         let suportes = 2;
