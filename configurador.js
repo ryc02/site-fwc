@@ -9,6 +9,8 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 
@@ -27,6 +29,16 @@ controls.maxDistance = 10;
 // Iluminação Realista (PBR)
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
 scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+dirLight.position.set(5, 5, 4);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.width = 2048;
+dirLight.shadow.mapSize.height = 2048;
+scene.add(dirLight);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+scene.add(ambientLight);
 
 // Lógica de Configuração Atual
 let currentLength = 2.4; // Metros
@@ -81,21 +93,27 @@ function rebuildModel() {
     const visualLength = currentLength;
 
     // Tubo Principal
-    const geometry = new THREE.CylinderGeometry(currentDiameter, currentDiameter, visualLength, 64);
+    const geometry = new THREE.CylinderGeometry(currentDiameter, currentDiameter, visualLength, 128);
     const varaoMesh = new THREE.Mesh(geometry, material);
     varaoMesh.rotation.z = Math.PI / 2; // Deita o cilindro horizontalmente
+    varaoMesh.castShadow = true;
+    varaoMesh.receiveShadow = true;
     varaoGroup.add(varaoMesh);
 
     // Ponteiras (Acabamentos nas pontas)
     const finialRadius = currentDiameter * 1.4;
-    const finialGeometry = new THREE.SphereGeometry(finialRadius, 32, 32);
+    const finialGeometry = new THREE.SphereGeometry(finialRadius, 64, 64);
     
     const leftFinial = new THREE.Mesh(finialGeometry, material);
     leftFinial.position.x = -visualLength / 2;
+    leftFinial.castShadow = true;
+    leftFinial.receiveShadow = true;
     varaoGroup.add(leftFinial);
 
     const rightFinial = new THREE.Mesh(finialGeometry, material);
     rightFinial.position.x = visualLength / 2;
+    rightFinial.castShadow = true;
+    rightFinial.receiveShadow = true;
     varaoGroup.add(rightFinial);
 
     // Suportes (Brackets)
@@ -113,10 +131,12 @@ function rebuildModel() {
         }
         
         // Argola do suporte (Torus ao redor do varão)
-        const ringGeo = new THREE.TorusGeometry(currentDiameter * 1.1, currentDiameter * 0.2, 16, 32);
+        const ringGeo = new THREE.TorusGeometry(currentDiameter * 1.1, currentDiameter * 0.2, 32, 64);
         const ring = new THREE.Mesh(ringGeo, material);
         ring.rotation.y = Math.PI / 2; // Gira para abraçar o varão no eixo X
         ring.position.x = posX;
+        ring.castShadow = true;
+        ring.receiveShadow = true;
         varaoGroup.add(ring);
         
         // Haste do suporte (estendendo para a "parede" atrás -Z)
@@ -124,13 +144,17 @@ function rebuildModel() {
         const stalkGeo = new THREE.BoxGeometry(0.015, 0.015, stalkLength);
         const stalk = new THREE.Mesh(stalkGeo, material);
         stalk.position.set(posX, 0, -stalkLength / 2 - currentDiameter);
+        stalk.castShadow = true;
+        stalk.receiveShadow = true;
         varaoGroup.add(stalk);
         
         // Base do suporte (encosta na parede)
-        const baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 32);
+        const baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 64);
         const base = new THREE.Mesh(baseGeo, material);
         base.rotation.x = Math.PI / 2;
         base.position.set(posX, 0, -stalkLength - currentDiameter);
+        base.castShadow = true;
+        base.receiveShadow = true;
         varaoGroup.add(base);
     }
 
