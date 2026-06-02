@@ -169,12 +169,19 @@ window.addEventListener('resize', () => {
 
 // 1. Calculadora de Tamanho
 const inputJanela = document.getElementById('janela-width');
+const selectUnidade = document.getElementById('medida-unidade');
 const divResultado = document.getElementById('resultado-medida');
 const textVarao = document.getElementById('varao-recomendado');
 
-inputJanela.addEventListener('input', (e) => {
-    const janela = parseFloat(e.target.value);
+function calcularMedida() {
+    let janela = parseFloat(inputJanela.value);
+    
     if (janela > 0) {
+        // Se a unidade for centímetros, converte para metros
+        if (selectUnidade.value === 'cm') {
+            janela = janela / 100;
+        }
+
         // Cálculo padrão: Largura da janela + 20cm de cada lado (total + 40cm)
         const ideal = janela + 0.4;
         textVarao.innerText = ideal.toFixed(2) + 'm';
@@ -219,6 +226,13 @@ inputJanela.addEventListener('input', (e) => {
         currentBrackets = 3;
         rebuildModel();
     }
+}
+
+inputJanela.addEventListener('input', calcularMedida);
+selectUnidade.addEventListener('change', () => {
+    // Ajusta o placeholder para a unidade escolhida
+    inputJanela.placeholder = selectUnidade.value === 'm' ? 'Ex: 2.00' : 'Ex: 200';
+    calcularMedida();
 });
 
 // 2. Mudança de Cor

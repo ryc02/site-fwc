@@ -288,8 +288,11 @@
                 <div class="config-group">
                     <label class="config-label">1. Qual a largura da sua janela?</label>
                     <div class="input-group">
-                        <input type="number" id="janela-width" placeholder="Ex: 2.00" step="0.1" min="0.5">
-                        <span style="font-weight: 500; color: #666;">Metros</span>
+                        <input type="number" id="janela-width" placeholder="Ex: 2.00" step="0.1" min="10">
+                        <select id="medida-unidade" style="border: none; background: transparent; font-weight: 500; color: #666; outline: none; cursor: pointer; padding-left: 10px; border-left: 1px solid #ddd;">
+                            <option value="m" selected>Metros (m)</option>
+                            <option value="cm">Centímetros (cm)</option>
+                        </select>
                     </div>
                     <div id="resultado-medida" style="display: none;">
                         <p style="margin: 0 0 5px 0;">Varão Recomendado: <strong id="varao-recomendado">2.40m</strong></p>
