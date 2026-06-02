@@ -183,12 +183,22 @@ function rebuildModel() {
         const windowY = -windowHeight / 2 - 0.1; // Fica 10cm abaixo do varão
         const windowZ = wall.position.z + 0.005;
 
-        // Vidro Escuro da Janela
+        // Vidro Escuro da Janela -> Agora com fundo de paisagem
+        const textureLoader = new THREE.TextureLoader();
+        // Imagem de céu/natureza do Unsplash (CORS enabled)
+        const windowBgTexture = textureLoader.load('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1024&q=80');
+        windowBgTexture.colorSpace = THREE.SRGBColorSpace;
+
         const glassGeo = new THREE.PlaneGeometry(windowWidth, windowHeight);
-        const glassMat = new THREE.MeshStandardMaterial({ color: 0x11151c, roughness: 0.1, metalness: 0.8 });
+        // MeshBasicMaterial para parecer iluminado (luz do sol de fora)
+        const glassMat = new THREE.MeshBasicMaterial({ 
+            map: windowBgTexture,
+            color: 0xdddddd // Levemente escurecido para não ofuscar o varão
+        });
+        
         const glass = new THREE.Mesh(glassGeo, glassMat);
         glass.position.set(0, windowY, windowZ);
-        glass.receiveShadow = true;
+        // Remove receiveShadow para não ficar escuro
         varaoGroup.add(glass);
 
         // Esquadria / Moldura Branca (Frame da Janela)
