@@ -182,43 +182,49 @@ function calcularMedida() {
             janela = janela / 100;
         }
 
-        // Cálculo padrão: Largura da janela + 20cm de cada lado (total + 40cm)
+        // Cálculo da medida ideal: Largura da janela + 20cm de cada lado (total + 40cm)
         const ideal = janela + 0.4;
-        textVarao.innerText = ideal.toFixed(2) + 'mt';
         
-        // Lógica de suportes e emendas
-        let suportes = 2;
-        let emendas = 0;
+        // Kits padrão fornecidos pela fábrica
+        const kits = [
+            { size: 1.0, barsText: "1 barra de 1 mt", brackets: 2 },
+            { size: 1.5, barsText: "2 barras de 75 cm", brackets: 3 },
+            { size: 2.0, barsText: "2 barras de 1 mt", brackets: 3 },
+            { size: 2.4, barsText: "2 barras de 1,20 mt", brackets: 3 },
+            { size: 3.0, barsText: "3 barras de 1 mt", brackets: 4 },
+            { size: 3.6, barsText: "3 barras de 1,20 mt", brackets: 4 },
+            { size: 4.0, barsText: "4 barras de 1 mt", brackets: 5 }
+        ];
+
+        let selectedKit = null;
         let exceeded = false;
 
-        if (ideal <= 1.5) {
-            suportes = 2;
-            emendas = 0;
-        } else if (ideal <= 2.5) {
-            suportes = 3;
-            emendas = 1;
-        } else if (ideal <= 3.5) {
-            suportes = 4;
-            emendas = 2;
-        } else if (ideal <= 4.0) {
-            suportes = 5;
-            emendas = 3;
-        } else {
-            // Acima de 4 metros (máximo permitido por kit)
-            suportes = Math.ceil(ideal / 1.0) + 1;
-            emendas = suportes - 2;
+        // Encontra o menor kit padrão que atenda à medida ideal
+        for (const kit of kits) {
+            if (kit.size >= ideal) {
+                selectedKit = kit;
+                break;
+            }
+        }
+
+        // Se passar do kit máximo de 4m
+        if (!selectedKit) {
+            selectedKit = kits[kits.length - 1]; // Usa os specs de 4m para renderizar no 3D
             exceeded = true;
         }
 
-        document.getElementById('qtd-suportes').innerText = suportes;
-        document.getElementById('qtd-emendas').innerText = emendas;
+        const formattedSize = selectedKit.size.toFixed(2).replace('.', ',') + 'mt';
+        textVarao.innerText = formattedSize;
+        
+        document.getElementById('qtd-barras').innerText = selectedKit.barsText;
+        document.getElementById('qtd-suportes').innerText = selectedKit.brackets + " suportes";
         document.getElementById('aviso-maximo').style.display = exceeded ? 'block' : 'none';
 
         divResultado.style.display = 'block';
 
         // Atualiza 3D
-        currentLength = Math.min(ideal, 4.0);
-        currentBrackets = suportes;
+        currentLength = selectedKit.size;
+        currentBrackets = selectedKit.brackets;
         rebuildModel();
     } else {
         divResultado.style.display = 'none';
