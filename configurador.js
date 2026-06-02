@@ -141,9 +141,38 @@ inputJanela.addEventListener('input', (e) => {
         // Cálculo padrão: Largura da janela + 20cm de cada lado (total + 40cm)
         const ideal = janela + 0.4;
         textVarao.innerText = ideal.toFixed(2) + 'm';
+        
+        // Lógica de suportes e emendas
+        let suportes = 2;
+        let emendas = 0;
+        let exceeded = false;
+
+        if (ideal <= 1.5) {
+            suportes = 2;
+            emendas = 0;
+        } else if (ideal <= 2.5) {
+            suportes = 3;
+            emendas = 1;
+        } else if (ideal <= 3.5) {
+            suportes = 4;
+            emendas = 2;
+        } else if (ideal <= 4.0) {
+            suportes = 5;
+            emendas = 3;
+        } else {
+            // Acima de 4 metros (máximo permitido por kit)
+            suportes = Math.ceil(ideal / 1.0) + 1;
+            emendas = suportes - 2;
+            exceeded = true;
+        }
+
+        document.getElementById('qtd-suportes').innerText = suportes;
+        document.getElementById('qtd-emendas').innerText = emendas;
+        document.getElementById('aviso-maximo').style.display = exceeded ? 'block' : 'none';
+
         divResultado.style.display = 'block';
 
-        // Atualiza 3D (limitando a 4 metros no visual para não estourar a tela)
+        // Atualiza 3D (limitando a 4 metros no visual para não estourar a tela ou bugar se for muito gigante)
         currentLength = Math.min(ideal, 4.0);
         rebuildModel();
     } else {
