@@ -266,8 +266,7 @@
     <div class="configurator-layout">
         <!-- Lado Esquerdo: 3D Canvas -->
         <div class="canvas-container">
-            <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.96/build/spline-viewer.js"></script>
-            <spline-viewer url="https://prod.spline.design/hvhevdnE6eKDomRK/scene.splinecode"></spline-viewer>
+            <canvas id="webgl-canvas"></canvas>
             <div class="view-controls">
                 <span><iconify-icon icon="mdi:gesture-swipe-horizontal"></iconify-icon> Girar</span>
                 <span><iconify-icon icon="mdi:magnify-plus-outline"></iconify-icon> Zoom</span>
@@ -358,7 +357,16 @@
         </div>
     </div>
 
-    <!-- Lógica de Interface -->
-    <script src="configurador.js"></script>
+    <!-- Import Three.js and OrbitControls -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="configurador.js"></script>
+
 </body>
 </html>
