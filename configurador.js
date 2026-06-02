@@ -93,7 +93,8 @@ function rebuildModel() {
     const visualLength = currentLength;
 
     // Tubo Principal
-    const geometry = new THREE.CylinderGeometry(currentDiameter, currentDiameter, visualLength, 128);
+    const rodRadius = currentDiameter / 2;
+    const geometry = new THREE.CylinderGeometry(rodRadius, rodRadius, visualLength, 128);
     const varaoMesh = new THREE.Mesh(geometry, material);
     varaoMesh.rotation.z = Math.PI / 2; // Deita o cilindro horizontalmente
     varaoMesh.castShadow = true;
@@ -102,18 +103,19 @@ function rebuildModel() {
 
     // Ponteiras (Acabamentos nas pontas) - Formato Dedal / Sino com ressaltos
     const points = [];
-    const r = currentDiameter / 2;
-    const L = currentDiameter * 1.5; // Comprimento total da ponteira
+    const r = rodRadius;
+    const L = currentDiameter * 1.2; // Comprimento total da ponteira
 
     // Perfil da ponteira (Raio X, Altura Y)
-    points.push(new THREE.Vector2(r, 0)); // Encaixe com o tubo
-    points.push(new THREE.Vector2(r * 1.35, 0)); // Base mais larga
-    points.push(new THREE.Vector2(r * 1.35, L * 0.15)); // Altura da base
-    points.push(new THREE.Vector2(r * 1.15, L * 0.25)); // Curva afunilando pro corpo
-    points.push(new THREE.Vector2(r * 1.15, L * 0.5)); // Primeira metade do corpo cilíndrico
-    points.push(new THREE.Vector2(r * 1.08, L * 0.5)); // Degrau interno característico da foto
-    points.push(new THREE.Vector2(r * 1.08, L * 0.75)); // Segunda metade
-    points.push(new THREE.Vector2(r * 0.85, L * 0.9)); // Início do arredondamento do topo
+    // Para parecer que veste por fora, a base começa ligeiramente maior que o tubo
+    points.push(new THREE.Vector2(r, 0)); // Tampa interna encosta no tubo
+    points.push(new THREE.Vector2(r * 1.4, 0)); // Base alarga (veste o tubo)
+    points.push(new THREE.Vector2(r * 1.4, L * 0.15)); // Altura da base
+    points.push(new THREE.Vector2(r * 1.2, L * 0.25)); // Curva afunilando pro corpo
+    points.push(new THREE.Vector2(r * 1.2, L * 0.5)); // Primeira metade do corpo cilíndrico
+    points.push(new THREE.Vector2(r * 1.12, L * 0.5)); // Degrau interno característico da foto
+    points.push(new THREE.Vector2(r * 1.12, L * 0.75)); // Segunda metade
+    points.push(new THREE.Vector2(r * 0.9, L * 0.9)); // Início do arredondamento do topo
     points.push(new THREE.Vector2(r * 0.5, L * 0.98)); // Meio do arredondamento
     points.push(new THREE.Vector2(0, L)); // Fechamento central da tampa
 
@@ -149,7 +151,10 @@ function rebuildModel() {
         }
         
         // Argola do suporte (Torus ao redor do varão)
-        const ringGeo = new THREE.TorusGeometry(currentDiameter * 1.1, currentDiameter * 0.2, 32, 64);
+        // O raio principal do torus deve ser o raio do varão + a espessura do próprio anel
+        const ringThickness = currentDiameter * 0.15;
+        const ringRadius = rodRadius + ringThickness;
+        const ringGeo = new THREE.TorusGeometry(ringRadius, ringThickness, 32, 64);
         const ring = new THREE.Mesh(ringGeo, material);
         ring.rotation.y = Math.PI / 2; // Gira para abraçar o varão no eixo X
         ring.position.x = posX;
