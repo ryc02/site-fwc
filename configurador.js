@@ -100,17 +100,35 @@ function rebuildModel() {
     varaoMesh.receiveShadow = true;
     varaoGroup.add(varaoMesh);
 
-    // Ponteiras (Acabamentos nas pontas)
-    const finialRadius = currentDiameter * 1.4;
-    const finialGeometry = new THREE.SphereGeometry(finialRadius, 64, 64);
+    // Ponteiras (Acabamentos nas pontas) - Formato Dedal / Sino com ressaltos
+    const points = [];
+    const r = currentDiameter / 2;
+    const L = currentDiameter * 1.5; // Comprimento total da ponteira
+
+    // Perfil da ponteira (Raio X, Altura Y)
+    points.push(new THREE.Vector2(r, 0)); // Encaixe com o tubo
+    points.push(new THREE.Vector2(r * 1.35, 0)); // Base mais larga
+    points.push(new THREE.Vector2(r * 1.35, L * 0.15)); // Altura da base
+    points.push(new THREE.Vector2(r * 1.15, L * 0.25)); // Curva afunilando pro corpo
+    points.push(new THREE.Vector2(r * 1.15, L * 0.5)); // Primeira metade do corpo cilíndrico
+    points.push(new THREE.Vector2(r * 1.08, L * 0.5)); // Degrau interno característico da foto
+    points.push(new THREE.Vector2(r * 1.08, L * 0.75)); // Segunda metade
+    points.push(new THREE.Vector2(r * 0.85, L * 0.9)); // Início do arredondamento do topo
+    points.push(new THREE.Vector2(r * 0.5, L * 0.98)); // Meio do arredondamento
+    points.push(new THREE.Vector2(0, L)); // Fechamento central da tampa
+
+    // Cria a geometria revolucionando o perfil 360 graus
+    const finialGeometry = new THREE.LatheGeometry(points, 64);
     
     const leftFinial = new THREE.Mesh(finialGeometry, material);
+    leftFinial.rotation.z = Math.PI / 2; // Aponta a ponta para a esquerda
     leftFinial.position.x = -visualLength / 2;
     leftFinial.castShadow = true;
     leftFinial.receiveShadow = true;
     varaoGroup.add(leftFinial);
 
     const rightFinial = new THREE.Mesh(finialGeometry, material);
+    rightFinial.rotation.z = -Math.PI / 2; // Aponta a ponta para a direita
     rightFinial.position.x = visualLength / 2;
     rightFinial.castShadow = true;
     rightFinial.receiveShadow = true;
