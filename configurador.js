@@ -45,7 +45,6 @@ let currentLength = 2.4; // Metros
 let currentDiameter = 0.019; // 19mm em metros
 let currentColor = 'chrome';
 let currentBrackets = 3; // Padrão para 2.4m
-let currentBackground = 'studio'; // 'studio' ou 'wall'
 
 // Materiais Físicos de Alta Qualidade
 const materials = {
@@ -159,21 +158,7 @@ function rebuildModel() {
         varaoGroup.add(base);
     }
 
-    if (currentBackground === 'wall') {
-        // Parede de Fundo Lisa e Elegante (Estilo Studio Arquitetônico)
-        const wallGeo = new THREE.PlaneGeometry(30, 20);
-        // Cor de parede de luxo (cinza quente / off-white)
-        const wallMat = new THREE.MeshStandardMaterial({ 
-            color: 0xf0ece1, 
-            roughness: 1.0, 
-            metalness: 0.0 
-        });
-        const wall = new THREE.Mesh(wallGeo, wallMat);
-        // Posiciona a parede exatamente onde a base do suporte encosta
-        wall.position.z = -0.08 - currentDiameter;
-        wall.receiveShadow = true;
-        varaoGroup.add(wall);
-    }
+    // Fundo Infinito apenas (Parede removida)
 
     // Ajusta a câmera para focar no varão inteiro
     camera.position.z = Math.max(3, visualLength * 1.2);
@@ -296,26 +281,15 @@ document.querySelectorAll('.color-btn').forEach(btn => {
 });
 
 // 3. Mudança de Espessura
-document.querySelectorAll('.size-btn:not(.bg-btn)').forEach(btn => {
+document.querySelectorAll('.size-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         // Atualiza UI
-        document.querySelectorAll('.size-btn:not(.bg-btn)').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
 
         // Atualiza 3D (converte mm para metros para o Three.js)
         const sizeMM = parseInt(e.target.getAttribute('data-size'));
         currentDiameter = sizeMM / 1000;
-        rebuildModel();
-    });
-});
-
-// 4. Mudança de Ambiente
-document.querySelectorAll('.bg-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-
-        currentBackground = e.target.getAttribute('data-bg');
         rebuildModel();
     });
 });
