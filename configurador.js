@@ -32,6 +32,7 @@ scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).textur
 let currentLength = 2.4; // Metros
 let currentDiameter = 0.019; // 19mm em metros
 let currentColor = 'chrome';
+let currentBrackets = 3; // Padrão para 2.4m
 
 // Materiais Físicos de Alta Qualidade
 const materials = {
@@ -96,6 +97,42 @@ function rebuildModel() {
     const rightFinial = new THREE.Mesh(finialGeometry, material);
     rightFinial.position.x = visualLength / 2;
     varaoGroup.add(rightFinial);
+
+    // Suportes (Brackets)
+    const padding = 0.05; // 5cm das bordas
+    const startX = -visualLength / 2 + padding;
+    const endX = visualLength / 2 - padding;
+    const span = endX - startX;
+    
+    for (let i = 0; i < currentBrackets; i++) {
+        let posX = 0;
+        if (currentBrackets === 1) {
+            posX = 0;
+        } else {
+            posX = startX + (span / (currentBrackets - 1)) * i;
+        }
+        
+        // Argola do suporte (Torus ao redor do varão)
+        const ringGeo = new THREE.TorusGeometry(currentDiameter * 1.1, currentDiameter * 0.2, 16, 32);
+        const ring = new THREE.Mesh(ringGeo, material);
+        ring.rotation.y = Math.PI / 2; // Gira para abraçar o varão no eixo X
+        ring.position.x = posX;
+        varaoGroup.add(ring);
+        
+        // Haste do suporte (estendendo para a "parede" atrás -Z)
+        const stalkLength = 0.08; // 8cm
+        const stalkGeo = new THREE.BoxGeometry(0.015, 0.015, stalkLength);
+        const stalk = new THREE.Mesh(stalkGeo, material);
+        stalk.position.set(posX, 0, -stalkLength / 2 - currentDiameter);
+        varaoGroup.add(stalk);
+        
+        // Base do suporte (encosta na parede)
+        const baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 32);
+        const base = new THREE.Mesh(baseGeo, material);
+        base.rotation.x = Math.PI / 2;
+        base.position.set(posX, 0, -stalkLength - currentDiameter);
+        varaoGroup.add(base);
+    }
 
     // Ajusta a câmera para focar no varão inteiro
     camera.position.z = Math.max(3, visualLength * 1.2);
@@ -172,12 +209,14 @@ inputJanela.addEventListener('input', (e) => {
 
         divResultado.style.display = 'block';
 
-        // Atualiza 3D (limitando a 4 metros no visual para não estourar a tela ou bugar se for muito gigante)
+        // Atualiza 3D
         currentLength = Math.min(ideal, 4.0);
+        currentBrackets = suportes;
         rebuildModel();
     } else {
         divResultado.style.display = 'none';
         currentLength = 2.4; // Default
+        currentBrackets = 3;
         rebuildModel();
     }
 });
