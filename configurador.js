@@ -40,11 +40,20 @@ scene.add(dirLight);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
 scene.add(ambientLight);
 
-// Lógica de Configuração Atual
-let currentLength = 2.4; // Metros
-let currentDiameter = 0.019; // 19mm em metros
+// Lógica de Configuração Atual (Física Elástica)
+let targetLength = 2.4;
+let currentLength = 2.4;
+let targetDiameter = 0.019;
+let currentDiameter = 0.019;
 let currentColor = 'chrome';
-let currentBrackets = 3; // Padrão para 2.4m
+let targetBrackets = 3;
+let currentBrackets = 3;
+
+// Referências Persistentes aos Objetos 3D
+let rodMesh = null;
+let leftFinial = null;
+let rightFinial = null;
+let bracketsArray = [];
 
 // Materiais Físicos de Alta Qualidade
 const materials = {
@@ -77,125 +86,147 @@ const materials = {
 let varaoGroup = new THREE.Group();
 scene.add(varaoGroup);
 
-function rebuildModel() {
-    // Limpa o modelo atual
+function rebuildGeometries() {
+    // Limpa o modelo atual completamente quando mudamos diâmetro ou cor (que são mudanças raras/pesadas)
     while(varaoGroup.children.length > 0){ 
         const child = varaoGroup.children[0];
-        child.geometry.dispose();
+        if(child.geometry) child.geometry.dispose();
         varaoGroup.remove(child); 
     }
+    bracketsArray = [];
 
     const material = materials[currentColor];
+    const rodRadius = targetDiameter / 2;
 
-    // O comprimento visual é reduzido em escala para caber na tela 
-    // mas a proporção comprimento/espessura é mantida.
-    // Para caber na tela, definimos que 1 metro virtual = 1 unidade 3D
-    const visualLength = currentLength;
+    // Tubo Principal (Criado com tamanho 1 e escalado via Y=Length)
+    const geometry = new THREE.CylinderGeometry(rodRadius, rodRadius, 1, 128);
+    rodMesh = new THREE.Mesh(geometry, material);
+    rodMesh.rotation.z = Math.PI / 2;
+    rodMesh.castShadow = true;
+    rodMesh.receiveShadow = true;
+    varaoGroup.add(rodMesh);
 
-    // Tubo Principal
-    const rodRadius = currentDiameter / 2;
-    const geometry = new THREE.CylinderGeometry(rodRadius, rodRadius, visualLength, 128);
-    const varaoMesh = new THREE.Mesh(geometry, material);
-    varaoMesh.rotation.z = Math.PI / 2; // Deita o cilindro horizontalmente
-    varaoMesh.castShadow = true;
-    varaoMesh.receiveShadow = true;
-    varaoGroup.add(varaoMesh);
-
-    // Ponteiras (Acabamentos nas pontas) - Formato Dedal / Sino com ressaltos
+    // Ponteiras (Dedal)
     const points = [];
     const r = rodRadius;
-    const L = currentDiameter * 1.2; // Comprimento total da ponteira
-
-    // Perfil da ponteira (Raio X, Altura Y)
-    // Para parecer que veste por fora, a base começa ligeiramente maior que o tubo
-    points.push(new THREE.Vector2(r, 0)); // Tampa interna encosta no tubo
-    points.push(new THREE.Vector2(r * 1.4, 0)); // Base alarga (veste o tubo)
-    points.push(new THREE.Vector2(r * 1.4, L * 0.15)); // Altura da base
-    points.push(new THREE.Vector2(r * 1.2, L * 0.25)); // Curva afunilando pro corpo
-    points.push(new THREE.Vector2(r * 1.2, L * 0.5)); // Primeira metade do corpo cilíndrico
-    points.push(new THREE.Vector2(r * 1.12, L * 0.5)); // Degrau interno característico da foto
-    points.push(new THREE.Vector2(r * 1.12, L * 0.75)); // Segunda metade
-    points.push(new THREE.Vector2(r * 0.9, L * 0.9)); // Início do arredondamento do topo
-    points.push(new THREE.Vector2(r * 0.5, L * 0.98)); // Meio do arredondamento
-    points.push(new THREE.Vector2(0, L)); // Fechamento central da tampa
-
-    // Cria a geometria revolucionando o perfil 360 graus
+    const L = targetDiameter * 1.2; 
+    points.push(new THREE.Vector2(r, 0)); 
+    points.push(new THREE.Vector2(r * 1.4, 0)); 
+    points.push(new THREE.Vector2(r * 1.4, L * 0.15)); 
+    points.push(new THREE.Vector2(r * 1.2, L * 0.25)); 
+    points.push(new THREE.Vector2(r * 1.2, L * 0.5)); 
+    points.push(new THREE.Vector2(r * 1.12, L * 0.5)); 
+    points.push(new THREE.Vector2(r * 1.12, L * 0.75)); 
+    points.push(new THREE.Vector2(r * 0.9, L * 0.9)); 
+    points.push(new THREE.Vector2(r * 0.5, L * 0.98)); 
+    points.push(new THREE.Vector2(0, L)); 
     const finialGeometry = new THREE.LatheGeometry(points, 64);
     
-    const leftFinial = new THREE.Mesh(finialGeometry, material);
-    leftFinial.rotation.z = Math.PI / 2; // Aponta a ponta para a esquerda
-    leftFinial.position.x = -visualLength / 2;
+    leftFinial = new THREE.Mesh(finialGeometry, material);
+    leftFinial.rotation.z = Math.PI / 2;
     leftFinial.castShadow = true;
     leftFinial.receiveShadow = true;
     varaoGroup.add(leftFinial);
 
-    const rightFinial = new THREE.Mesh(finialGeometry, material);
-    rightFinial.rotation.z = -Math.PI / 2; // Aponta a ponta para a direita
-    rightFinial.position.x = visualLength / 2;
+    rightFinial = new THREE.Mesh(finialGeometry, material);
+    rightFinial.rotation.z = -Math.PI / 2;
     rightFinial.castShadow = true;
     rightFinial.receiveShadow = true;
     varaoGroup.add(rightFinial);
 
-    // Suportes (Brackets)
-    const padding = 0.05; // 5cm das bordas
-    const startX = -visualLength / 2 + padding;
-    const endX = visualLength / 2 - padding;
-    const span = endX - startX;
-    
-    for (let i = 0; i < currentBrackets; i++) {
-        let posX = 0;
-        if (currentBrackets === 1) {
-            posX = 0;
-        } else {
-            posX = startX + (span / (currentBrackets - 1)) * i;
-        }
+    // Pré-criação de um pool de suportes (até 10 para lidar com tamanhos grandes)
+    for (let i = 0; i < 10; i++) {
+        const group = new THREE.Group();
         
-        // Argola do suporte (Torus ao redor do varão)
-        // O raio principal do torus deve ser o raio do varão + a espessura do próprio anel
-        const ringThickness = currentDiameter * 0.15;
+        const ringThickness = targetDiameter * 0.15;
         const ringRadius = rodRadius + ringThickness;
         const ringGeo = new THREE.TorusGeometry(ringRadius, ringThickness, 32, 64);
         const ring = new THREE.Mesh(ringGeo, material);
-        ring.rotation.y = Math.PI / 2; // Gira para abraçar o varão no eixo X
-        ring.position.x = posX;
+        ring.rotation.y = Math.PI / 2;
         ring.castShadow = true;
         ring.receiveShadow = true;
-        varaoGroup.add(ring);
+        group.add(ring);
         
-        // Haste do suporte (estendendo para a "parede" atrás -Z)
-        const stalkLength = 0.08; // 8cm
+        const stalkLength = 0.08; 
         const stalkGeo = new THREE.BoxGeometry(0.015, 0.015, stalkLength);
         const stalk = new THREE.Mesh(stalkGeo, material);
-        stalk.position.set(posX, 0, -stalkLength / 2 - currentDiameter);
+        stalk.position.set(0, 0, -stalkLength / 2 - targetDiameter);
         stalk.castShadow = true;
         stalk.receiveShadow = true;
-        varaoGroup.add(stalk);
+        group.add(stalk);
         
-        // Base do suporte (encosta na parede)
         const baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 64);
         const base = new THREE.Mesh(baseGeo, material);
         base.rotation.x = Math.PI / 2;
-        base.position.set(posX, 0, -stalkLength - currentDiameter);
+        base.position.set(0, 0, -stalkLength - targetDiameter);
         base.castShadow = true;
         base.receiveShadow = true;
-        varaoGroup.add(base);
+        group.add(base);
+
+        // Suportes nascem escondidos (escala 0)
+        group.scale.set(0, 0, 0);
+        varaoGroup.add(group);
+        bracketsArray.push(group);
     }
-
-    // Fundo Infinito apenas (Parede removida)
-
-    // Ajusta a câmera para focar no varão inteiro
-    camera.position.z = Math.max(3, visualLength * 1.2);
 }
 
 // Inicializa o modelo
-rebuildModel();
+rebuildGeometries();
 
-// Animação/Render Loop
+// Animação/Render Loop com Física Elástica (LERP)
 function animate() {
     requestAnimationFrame(animate);
-    controls.update(); // required if controls.enableDamping is true
+    controls.update();
     
-    // Gira lentamente sozinho para demonstrar o material
+    // Lerp suave para o comprimento do varão (Efeito Elástico)
+    currentLength += (targetLength - currentLength) * 0.1;
+    
+    // Atualiza o 3D se os objetos já foram inicializados
+    if (rodMesh && leftFinial && rightFinial) {
+        // Estica o varão usando a escala Y (já que ele foi deitado em Z)
+        rodMesh.scale.y = currentLength;
+        
+        // Posiciona as ponteiras nas pontas esticadas
+        leftFinial.position.x = -currentLength / 2;
+        rightFinial.position.x = currentLength / 2;
+        
+        // Física dos suportes deslizando e "nascendo"
+        const padding = 0.05;
+        const startX = -currentLength / 2 + padding;
+        const endX = currentLength / 2 - padding;
+        const span = endX - startX;
+        
+        for (let i = 0; i < bracketsArray.length; i++) {
+            const bracket = bracketsArray[i];
+            
+            // Se o bracket deve existir nesta configuração (índice menor que o target)
+            if (i < targetBrackets) {
+                // Calcula a posição ideal que ele deve assumir
+                let targetX = 0;
+                if (targetBrackets > 1) {
+                    targetX = startX + (span / (targetBrackets - 1)) * i;
+                }
+                
+                // Desliza suavemente no eixo X
+                bracket.position.x += (targetX - bracket.position.x) * 0.1;
+                // Nasce suavemente (Scale 0 -> 1)
+                bracket.scale.x += (1 - bracket.scale.x) * 0.1;
+                bracket.scale.y += (1 - bracket.scale.y) * 0.1;
+                bracket.scale.z += (1 - bracket.scale.z) * 0.1;
+            } else {
+                // Se o bracket for excedente (ex: passou de 5 para 3 suportes), ele murcha e some
+                bracket.scale.x += (0 - bracket.scale.x) * 0.2;
+                bracket.scale.y += (0 - bracket.scale.y) * 0.2;
+                bracket.scale.z += (0 - bracket.scale.z) * 0.2;
+            }
+        }
+        
+        // Câmera afasta suavemente se o varão for muito grande
+        const targetCamZ = Math.max(3, currentLength * 1.2);
+        camera.position.z += (targetCamZ - camera.position.z) * 0.05;
+    }
+
+    // Gira lentamente sozinho para demonstrar o material metálico
     if (!controls.state && varaoGroup) {
         varaoGroup.rotation.x += 0.002;
     }
@@ -272,9 +303,9 @@ function calcularMedida() {
         divResultado.style.display = 'block';
 
         // Atualiza 3D
-        currentLength = selectedKit.size;
-        currentBrackets = selectedKit.brackets;
-        rebuildModel();
+        // Atualiza as variáveis de Alvo (Target) para a Física agir
+        targetLength = selectedKit.size;
+        targetBrackets = selectedKit.brackets;
     } else {
         divResultado.style.display = 'none';
         currentLength = 2.4; // Default
@@ -297,9 +328,9 @@ document.querySelectorAll('.color-btn').forEach(btn => {
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
 
-        // Atualiza 3D
+        // Atualiza a Cor e reconstrói as geometrias
         currentColor = e.target.getAttribute('data-color');
-        rebuildModel();
+        rebuildGeometries();
     });
 });
 
@@ -310,9 +341,9 @@ document.querySelectorAll('.size-btn').forEach(btn => {
         document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
 
-        // Atualiza 3D (converte mm para metros para o Three.js)
+        // Atualiza a Espessura e reconstrói as geometrias
         const sizeMM = parseInt(e.target.getAttribute('data-size'));
-        currentDiameter = sizeMM / 1000;
-        rebuildModel();
+        targetDiameter = sizeMM / 1000;
+        rebuildGeometries();
     });
 });
