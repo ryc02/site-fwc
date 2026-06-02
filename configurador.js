@@ -45,6 +45,7 @@ let currentLength = 2.4; // Metros
 let currentDiameter = 0.019; // 19mm em metros
 let currentColor = 'chrome';
 let currentBrackets = 3; // Padrão para 2.4m
+let currentBackground = 'studio'; // 'studio' ou 'wall'
 
 // Materiais Físicos de Alta Qualidade
 const materials = {
@@ -156,6 +157,28 @@ function rebuildModel() {
         base.castShadow = true;
         base.receiveShadow = true;
         varaoGroup.add(base);
+    }
+
+    if (currentBackground === 'wall') {
+        // Parede (Plano de Fundo)
+        const wallGeo = new THREE.PlaneGeometry(15, 10);
+        const wallMat = new THREE.MeshStandardMaterial({ color: 0xeaeaea, roughness: 1.0, metalness: 0.0 });
+        const wall = new THREE.Mesh(wallGeo, wallMat);
+        // Posiciona a parede exatamente onde a base do suporte encosta
+        wall.position.z = -0.08 - currentDiameter;
+        wall.receiveShadow = true;
+        varaoGroup.add(wall);
+
+        // Janela (Simulação de um vidro escuro)
+        const windowWidth = Math.max(0.5, currentLength - 0.4); // Largura real da janela
+        const windowHeight = 1.6;
+        const windowGeo = new THREE.PlaneGeometry(windowWidth, windowHeight);
+        const windowMat = new THREE.MeshStandardMaterial({ color: 0x1a202c, roughness: 0.1, metalness: 0.5 }); // Vidro escuro
+        const windowMesh = new THREE.Mesh(windowGeo, windowMat);
+        windowMesh.position.z = wall.position.z + 0.001; // Levemente à frente para não piscar
+        windowMesh.position.y = -windowHeight / 2 - 0.1; // Fica 10cm abaixo do varão
+        windowMesh.receiveShadow = true;
+        varaoGroup.add(windowMesh);
     }
 
     // Ajusta a câmera para focar no varão inteiro
@@ -279,15 +302,26 @@ document.querySelectorAll('.color-btn').forEach(btn => {
 });
 
 // 3. Mudança de Espessura
-document.querySelectorAll('.size-btn').forEach(btn => {
+document.querySelectorAll('.size-btn:not(.bg-btn)').forEach(btn => {
     btn.addEventListener('click', (e) => {
         // Atualiza UI
-        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.size-btn:not(.bg-btn)').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
 
         // Atualiza 3D (converte mm para metros para o Three.js)
         const sizeMM = parseInt(e.target.getAttribute('data-size'));
         currentDiameter = sizeMM / 1000;
+        rebuildModel();
+    });
+});
+
+// 4. Mudança de Ambiente
+document.querySelectorAll('.bg-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+
+        currentBackground = e.target.getAttribute('data-bg');
         rebuildModel();
     });
 });
