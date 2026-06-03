@@ -26,6 +26,11 @@ controls.enablePan = false;
 controls.minDistance = 1;
 controls.maxDistance = 10;
 
+// Desativa o zoom automático se o usuário interagir com o controle
+controls.addEventListener('start', () => { autoAdjustCamera = false; });
+renderer.domElement.addEventListener('wheel', () => { autoAdjustCamera = false; });
+renderer.domElement.addEventListener('touchstart', () => { autoAdjustCamera = false; });
+
 // Iluminação Realista (PBR)
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
 scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -43,6 +48,7 @@ scene.add(ambientLight);
 // Lógica de Configuração Atual (Física Elástica)
 let targetLength = 2.4;
 let currentLength = 2.4;
+let autoAdjustCamera = true;
 let targetDiameter = 0.019;
 let currentDiameter = 0.019;
 let currentColor = 'chrome';
@@ -231,8 +237,13 @@ function animate() {
         }
         
         // Câmera afasta suavemente se o varão for muito grande
-        const targetCamZ = Math.max(3, currentLength * 1.2);
-        camera.position.z += (targetCamZ - camera.position.z) * 0.05;
+        if (autoAdjustCamera) {
+            const targetCamZ = Math.max(3, currentLength * 1.2);
+            camera.position.z += (targetCamZ - camera.position.z) * 0.05;
+            if (Math.abs(targetCamZ - camera.position.z) < 0.01) {
+                autoAdjustCamera = false;
+            }
+        }
     }
 
     // Gira lentamente sozinho para demonstrar o material metálico
@@ -315,11 +326,13 @@ function calcularMedida() {
         // Atualiza as variáveis de Alvo (Target) para a Física agir
         targetLength = selectedKit.size;
         targetBrackets = selectedKit.brackets;
+        autoAdjustCamera = true;
     } else {
         divResultado.style.display = 'none';
         currentLength = 2.4; // Default
         currentBrackets = 3;
-        rebuildModel();
+        rebuildGeometries();
+        autoAdjustCamera = true;
     }
 }
 
