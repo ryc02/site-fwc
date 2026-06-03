@@ -268,8 +268,29 @@ window.addEventListener('resize', () => {
 });
 
 // ==========================================
-// INTEGRAÇÃO COM A INTERFACE (DOM)
+// INTEGRAÇÃO COM A INTERFACE (DOM) E LINKS DINÂMICOS
 // ==========================================
+
+function updateStoreLinks() {
+    const shopeeBtn = document.getElementById('shopee-btn');
+    if (!shopeeBtn || !targetLength) return;
+
+    const corMap = {
+        'chrome': 'Cromado',
+        'gold': 'Dourado',
+        'black': 'Preto',
+        'white': 'Branco'
+    };
+    
+    const espessura = targetDiameter === 0.019 ? '19mm' : '28mm';
+    const cor = corMap[currentColor];
+    const tamanho = targetLength.toFixed(2).replace('.', ',') + 'm';
+    
+    // Constrói o termo de busca dinâmico para a Shopee
+    const keyword = `varao ${tamanho} ${cor} ${espessura}`;
+    
+    shopeeBtn.href = `https://shopee.com.br/fwcsolucoesemmanutencaoltda?entryPoint=ShopBySearch&searchKeyword=${encodeURIComponent(keyword)}`;
+}
 
 // 1. Calculadora de Tamanho
 const inputJanela = document.getElementById('janela-width');
@@ -331,12 +352,14 @@ function calcularMedida() {
         targetLength = selectedKit.size;
         targetBrackets = selectedKit.brackets;
         autoAdjustCamera = true;
+        updateStoreLinks();
     } else {
         divResultado.style.display = 'none';
         currentLength = 2.4; // Default
         currentBrackets = 3;
         rebuildGeometries();
         autoAdjustCamera = true;
+        updateStoreLinks();
     }
 }
 
@@ -357,6 +380,7 @@ document.querySelectorAll('.color-btn').forEach(btn => {
         // Atualiza a Cor e reconstrói as geometrias
         currentColor = e.target.getAttribute('data-color');
         rebuildGeometries();
+        updateStoreLinks();
     });
 });
 
@@ -371,6 +395,7 @@ document.querySelectorAll('.size-btn:not(.support-btn)').forEach(btn => {
         const sizeMM = parseInt(e.target.getAttribute('data-size'));
         targetDiameter = sizeMM / 1000;
         rebuildGeometries();
+        updateStoreLinks();
     });
 });
 
@@ -384,5 +409,9 @@ document.querySelectorAll('.support-btn').forEach(btn => {
         // Atualiza o tipo de suporte e reconstrói as geometrias
         currentSupportType = e.target.getAttribute('data-support');
         rebuildGeometries();
+        updateStoreLinks();
     });
 });
+
+// Atualiza o link pela primeira vez no carregamento
+updateStoreLinks();
