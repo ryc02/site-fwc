@@ -157,7 +157,7 @@ function rebuildGeometries() {
         const stalkLength = 0.08; 
         const stalkGeo = new THREE.BoxGeometry(0.015, 0.015, stalkLength);
         const stalk = new THREE.Mesh(stalkGeo, material);
-        stalk.position.set(0, 0, -stalkLength / 2 - targetDiameter);
+        stalk.position.set(0, 0, -stalkLength / 2 - rodRadius);
         stalk.castShadow = true;
         stalk.receiveShadow = true;
         group.add(stalk);
@@ -173,7 +173,7 @@ function rebuildGeometries() {
             base = new THREE.Mesh(baseGeo, material);
         }
         
-        base.position.set(0, 0, -stalkLength - targetDiameter);
+        base.position.set(0, 0, -stalkLength - rodRadius);
         base.castShadow = true;
         base.receiveShadow = true;
         group.add(base);
