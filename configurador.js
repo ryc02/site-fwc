@@ -46,6 +46,7 @@ let currentLength = 2.4;
 let targetDiameter = 0.019;
 let currentDiameter = 0.019;
 let currentColor = 'chrome';
+let currentSupportType = '1p';
 let targetBrackets = 3;
 let currentBrackets = 3;
 
@@ -155,9 +156,17 @@ function rebuildGeometries() {
         stalk.receiveShadow = true;
         group.add(stalk);
         
-        const baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 64);
-        const base = new THREE.Mesh(baseGeo, material);
-        base.rotation.x = Math.PI / 2;
+        let baseGeo, base;
+        if (currentSupportType === '1p') {
+            baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 64);
+            base = new THREE.Mesh(baseGeo, material);
+            base.rotation.x = Math.PI / 2;
+        } else {
+            // Suporte 2p (2 furos) com base retangular larga
+            baseGeo = new THREE.BoxGeometry(0.07, 0.03, 0.01);
+            base = new THREE.Mesh(baseGeo, material);
+        }
+        
         base.position.set(0, 0, -stalkLength - targetDiameter);
         base.castShadow = true;
         base.receiveShadow = true;
@@ -338,12 +347,25 @@ document.querySelectorAll('.color-btn').forEach(btn => {
 document.querySelectorAll('.size-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         // Atualiza UI
-        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.size-btn:not(.support-btn)').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
 
         // Atualiza a Espessura e reconstrói as geometrias
         const sizeMM = parseInt(e.target.getAttribute('data-size'));
         targetDiameter = sizeMM / 1000;
+        rebuildGeometries();
+    });
+});
+
+// 4. Mudança de Tipo de Suporte
+document.querySelectorAll('.support-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Atualiza UI
+        document.querySelectorAll('.support-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+
+        // Atualiza o tipo de suporte e reconstrói as geometrias
+        currentSupportType = e.target.getAttribute('data-support');
         rebuildGeometries();
     });
 });
