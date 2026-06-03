@@ -175,36 +175,77 @@ function rebuildGeometries() {
             base.rotation.x = Math.PI / 2;
             baseGroup.add(base);
         } else {
-            // Suporte 2p: Base realista com curvas laterais (ampulheta suave) via Shape
+            // Suporte 2p: Estrutura CAD (Oca e Vazada)
             const w = 0.030; // largura máxima
             const h = 0.065; // altura total
             const indent = 0.005; // curva para dentro nas laterais
+            const wall = 0.002; // espessura da parede da base
             
-            const shape = new THREE.Shape();
-            shape.moveTo(w/2, h/2); // Superior direito
-            shape.quadraticCurveTo((w/2) - indent, 0, w/2, -h/2); // Lateral direita curvada
-            shape.lineTo(-w/2, -h/2); // Inferior reto
-            shape.quadraticCurveTo((-w/2) + indent, 0, -w/2, h/2); // Lateral esquerda curvada
-            shape.lineTo(w/2, h/2); // Superior reto
+            // 1. Casca Externa (Parede Oca)
+            const outerShape = new THREE.Shape();
+            outerShape.moveTo(w/2, h/2);
+            outerShape.quadraticCurveTo((w/2) - indent, 0, w/2, -h/2);
+            outerShape.lineTo(-w/2, -h/2);
+            outerShape.quadraticCurveTo((-w/2) + indent, 0, -w/2, h/2);
+            outerShape.lineTo(w/2, h/2);
             
-            const extrudeSettings = { depth: 0.015, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.001, bevelThickness: 0.001 };
-            const baseGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-            baseGeo.center();
-            const base = new THREE.Mesh(baseGeo, material);
-            baseGroup.add(base);
+            const innerShape = new THREE.Path();
+            const iw = w - wall * 2;
+            const ih = h - wall * 2;
+            const iindent = indent * 0.8;
+            innerShape.moveTo(iw/2, ih/2);
+            innerShape.quadraticCurveTo((iw/2) - iindent, 0, iw/2, -ih/2);
+            innerShape.lineTo(-iw/2, -ih/2);
+            innerShape.quadraticCurveTo((-iw/2) + iindent, 0, -iw/2, ih/2);
+            innerShape.lineTo(iw/2, ih/2);
+            outerShape.holes.push(innerShape);
             
-            // Furações/Tubos para parafusos na cor do suporte, com o fundo mais escuro
-            const holeGeo = new THREE.CylinderGeometry(0.004, 0.004, 0.016, 16);
-            const holeMat = new THREE.MeshBasicMaterial({ color: 0x111111 }); // Simula profundidade/sombra
-            const hole1 = new THREE.Mesh(holeGeo, holeMat);
-            hole1.rotation.x = Math.PI / 2;
-            hole1.position.set(0, h/2 - 0.008, 0.005);
+            const shellExtrudeSettings = { depth: 0.015, bevelEnabled: false };
+            const shellGeo = new THREE.ExtrudeGeometry(outerShape, shellExtrudeSettings);
+            shellGeo.center(); // centraliza no eixo Z também (-0.0075 a +0.0075)
+            const shell = new THREE.Mesh(shellGeo, material);
+            baseGroup.add(shell);
             
-            const hole2 = hole1.clone();
-            hole2.position.set(0, -h/2 + 0.008, 0.005);
+            // 2. Placa Frontal com Furos Atravessados
+            const frontShape = new THREE.Shape();
+            frontShape.moveTo(w/2, h/2);
+            frontShape.quadraticCurveTo((w/2) - indent, 0, w/2, -h/2);
+            frontShape.lineTo(-w/2, -h/2);
+            frontShape.quadraticCurveTo((-w/2) + indent, 0, -w/2, h/2);
+            frontShape.lineTo(w/2, h/2);
             
-            baseGroup.add(hole1);
-            baseGroup.add(hole2);
+            const screwHole1 = new THREE.Path();
+            screwHole1.absarc(0, h/2 - 0.008, 0.0025, 0, Math.PI * 2, false);
+            frontShape.holes.push(screwHole1);
+            
+            const screwHole2 = new THREE.Path();
+            screwHole2.absarc(0, -h/2 + 0.008, 0.0025, 0, Math.PI * 2, false);
+            frontShape.holes.push(screwHole2);
+            
+            const frontExtrudeSettings = { depth: 0.002, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.0005, bevelThickness: 0.0005 };
+            const frontGeo = new THREE.ExtrudeGeometry(frontShape, frontExtrudeSettings);
+            frontGeo.center();
+            const frontPlate = new THREE.Mesh(frontGeo, material);
+            frontPlate.position.set(0, 0, 0.0075 + 0.001); // Encosta na frente da casca
+            baseGroup.add(frontPlate);
+            
+            // 3. Dutos dos Parafusos (Pilares Vazados)
+            const postShape = new THREE.Shape();
+            postShape.absarc(0, 0, 0.0045, 0, Math.PI * 2, false);
+            const postHole = new THREE.Path();
+            postHole.absarc(0, 0, 0.0025, 0, Math.PI * 2, false);
+            postShape.holes.push(postHole);
+            
+            const postGeo = new THREE.ExtrudeGeometry(postShape, { depth: 0.015, bevelEnabled: false });
+            postGeo.center();
+            
+            const post1 = new THREE.Mesh(postGeo, material);
+            post1.position.set(0, h/2 - 0.008, 0); // No eixo Z, como foi centrado, preenche exatamente o espaço interno da casca
+            const post2 = new THREE.Mesh(postGeo, material);
+            post2.position.set(0, -h/2 + 0.008, 0);
+            
+            baseGroup.add(post1);
+            baseGroup.add(post2);
         }
         
         baseGroup.position.set(0, 0, -stalkLength - rodRadius);
