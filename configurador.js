@@ -216,6 +216,18 @@ function rebuildGeometries() {
             const post = new THREE.Mesh(postGeo, material);
             post.position.set(0, 0, 0); // No centro exato
             baseGroup.add(post);
+            
+            // 4. Parafuso Metálico Embutido (Saindo pela parte de trás)
+            // Usamos uma textura ou simplesmente um material metálico claro
+            const screwGeo = new THREE.CylinderGeometry(0.002, 0.002, 0.04, 16);
+            const screwMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8, roughness: 0.4 });
+            const screwMesh = new THREE.Mesh(screwGeo, screwMat);
+            screwMesh.rotation.x = Math.PI / 2;
+            // A base termina em Z = -0.0075 (local), então o parafuso começa dali para trás
+            screwMesh.position.set(0, 0, -0.0075 - 0.02); 
+            screwMesh.castShadow = true;
+            screwMesh.receiveShadow = true;
+            baseGroup.add(screwMesh);
         } else {
             // Suporte 2p: Estrutura CAD (Oca e Vazada)
             const w = 0.030; // largura máxima
