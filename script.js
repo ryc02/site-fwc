@@ -227,3 +227,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initHeroCanvas();
 });
+
+
+// Resolve problema de links do TikTok no Desktop (about:blank)
+document.addEventListener('DOMContentLoaded', () => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (!isMobile) {
+        const tiktokLinks = document.querySelectorAll('a[href*="vt.tiktok.com"]');
+        tiktokLinks.forEach(link => {
+            link.href = "https://www.tiktok.com/@fwc_solucoes";
+        });
+    }
+});
