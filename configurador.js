@@ -344,7 +344,7 @@ document.querySelectorAll('.color-btn').forEach(btn => {
 });
 
 // 3. Mudança de Espessura
-document.querySelectorAll('.size-btn').forEach(btn => {
+document.querySelectorAll('.size-btn:not(.support-btn)').forEach(btn => {
     btn.addEventListener('click', (e) => {
         // Atualiza UI
         document.querySelectorAll('.size-btn:not(.support-btn)').forEach(b => b.classList.remove('active'));
