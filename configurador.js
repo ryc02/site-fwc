@@ -141,6 +141,18 @@ function rebuildGeometries() {
         const ring = new THREE.Mesh(ringGeo, material);
         ring.rotation.y = Math.PI / 2;
         ring.rotation.x = Math.PI * 0.85; // Ajuste para deixar a abertura virada para cima/frente
+        
+        // Arredondando as pontas do C (pontas injetadas suaves)
+        const sphereGeo = new THREE.SphereGeometry(ringThickness, 16, 16);
+        const sphere1 = new THREE.Mesh(sphereGeo, material);
+        sphere1.position.set(ringRadius, 0, 0); 
+        ring.add(sphere1);
+        
+        const sphere2 = new THREE.Mesh(sphereGeo, material);
+        const endAngle = Math.PI * 1.3;
+        sphere2.position.set(ringRadius * Math.cos(endAngle), ringRadius * Math.sin(endAngle), 0);
+        ring.add(sphere2);
+        
         ring.castShadow = true;
         ring.receiveShadow = true;
         group.add(ring);
@@ -156,21 +168,53 @@ function rebuildGeometries() {
         stalk.receiveShadow = true;
         group.add(stalk);
         
-        let baseGeo, base;
+        let baseGroup = new THREE.Group();
         if (currentSupportType === '1p') {
-            baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 64);
-            base = new THREE.Mesh(baseGeo, material);
+            const baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 64);
+            const base = new THREE.Mesh(baseGeo, material);
             base.rotation.x = Math.PI / 2;
+            baseGroup.add(base);
         } else {
-            // Suporte 2p (2 furos) com base retangular vertical baseada na foto
-            baseGeo = new THREE.BoxGeometry(0.025, 0.06, 0.015);
-            base = new THREE.Mesh(baseGeo, material);
+            // Suporte 2p: Base realista com curvas laterais (ampulheta suave) via Shape
+            const w = 0.030; // largura máxima
+            const h = 0.065; // altura total
+            const indent = 0.005; // curva para dentro nas laterais
+            
+            const shape = new THREE.Shape();
+            shape.moveTo(w/2, h/2); // Superior direito
+            shape.quadraticCurveTo((w/2) - indent, 0, w/2, -h/2); // Lateral direita curvada
+            shape.lineTo(-w/2, -h/2); // Inferior reto
+            shape.quadraticCurveTo((-w/2) + indent, 0, -w/2, h/2); // Lateral esquerda curvada
+            shape.lineTo(w/2, h/2); // Superior reto
+            
+            const extrudeSettings = { depth: 0.015, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.001, bevelThickness: 0.001 };
+            const baseGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            baseGeo.center();
+            const base = new THREE.Mesh(baseGeo, material);
+            baseGroup.add(base);
+            
+            // Furações/Tubos para parafusos na cor do suporte, com o fundo mais escuro
+            const holeGeo = new THREE.CylinderGeometry(0.004, 0.004, 0.016, 16);
+            const holeMat = new THREE.MeshBasicMaterial({ color: 0x111111 }); // Simula profundidade/sombra
+            const hole1 = new THREE.Mesh(holeGeo, holeMat);
+            hole1.rotation.x = Math.PI / 2;
+            hole1.position.set(0, h/2 - 0.008, 0.005);
+            
+            const hole2 = hole1.clone();
+            hole2.position.set(0, -h/2 + 0.008, 0.005);
+            
+            baseGroup.add(hole1);
+            baseGroup.add(hole2);
         }
         
-        base.position.set(0, 0, -stalkLength - rodRadius);
-        base.castShadow = true;
-        base.receiveShadow = true;
-        group.add(base);
+        baseGroup.position.set(0, 0, -stalkLength - rodRadius);
+        baseGroup.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+        group.add(baseGroup);
 
         // Suportes nascem escondidos (escala 0)
         group.scale.set(0, 0, 0);
