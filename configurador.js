@@ -135,16 +135,22 @@ function rebuildGeometries() {
         
         const ringThickness = targetDiameter * 0.15;
         const ringRadius = rodRadius + ringThickness;
-        const ringGeo = new THREE.TorusGeometry(ringRadius, ringThickness, 32, 64);
+        
+        // Novo anel em formato de "C" (Aberto em cima/frente)
+        const ringGeo = new THREE.TorusGeometry(ringRadius, ringThickness, 32, 64, Math.PI * 1.3);
         const ring = new THREE.Mesh(ringGeo, material);
         ring.rotation.y = Math.PI / 2;
+        ring.rotation.x = Math.PI * 0.85; // Ajuste para deixar a abertura virada para cima/frente
         ring.castShadow = true;
         ring.receiveShadow = true;
         group.add(ring);
         
         const stalkLength = 0.08; 
-        const stalkGeo = new THREE.BoxGeometry(0.015, 0.015, stalkLength);
+        
+        // Nova haste cônica (base mais grossa, topo mais fino)
+        const stalkGeo = new THREE.CylinderGeometry(0.008, 0.018, stalkLength, 32);
         const stalk = new THREE.Mesh(stalkGeo, material);
+        stalk.rotation.x = Math.PI / 2;
         stalk.position.set(0, 0, -stalkLength / 2 - rodRadius);
         stalk.castShadow = true;
         stalk.receiveShadow = true;
@@ -156,8 +162,8 @@ function rebuildGeometries() {
             base = new THREE.Mesh(baseGeo, material);
             base.rotation.x = Math.PI / 2;
         } else {
-            // Suporte 2p (2 furos) com base retangular (vertical)
-            baseGeo = new THREE.BoxGeometry(0.025, 0.07, 0.01);
+            // Suporte 2p (2 furos) com base retangular horizontal baseada na foto
+            baseGeo = new THREE.BoxGeometry(0.06, 0.025, 0.015);
             base = new THREE.Mesh(baseGeo, material);
         }
         
