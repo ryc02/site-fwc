@@ -68,25 +68,29 @@ const materials = {
         color: 0xffffff,
         metalness: 1.0,
         roughness: 0.15,
-        envMapIntensity: 1.0
+        envMapIntensity: 1.0,
+        side: THREE.DoubleSide
     }),
     'gold': new THREE.MeshStandardMaterial({
         color: 0xffcc00,
         metalness: 1.0,
         roughness: 0.2,
-        envMapIntensity: 1.0
+        envMapIntensity: 1.0,
+        side: THREE.DoubleSide
     }),
     'black': new THREE.MeshStandardMaterial({
         color: 0x111111,
         metalness: 0.3,
         roughness: 0.6,
-        envMapIntensity: 0.5
+        envMapIntensity: 0.5,
+        side: THREE.DoubleSide
     }),
     'white': new THREE.MeshStandardMaterial({
         color: 0xf5f5f5,
         metalness: 0.1,
         roughness: 0.4,
-        envMapIntensity: 0.5
+        envMapIntensity: 0.5,
+        side: THREE.DoubleSide
     })
 };
 
@@ -105,8 +109,8 @@ function rebuildGeometries() {
     const material = materials[currentColor];
     const rodRadius = targetDiameter / 2;
 
-    // Tubo Principal (Criado com tamanho 1 e escalado via Y=Length)
-    const geometry = new THREE.CylinderGeometry(rodRadius, rodRadius, 1, 128);
+    // Tubo Principal (Criado com tamanho 1 e escalado via Y=Length, oco/aberto nas pontas)
+    const geometry = new THREE.CylinderGeometry(rodRadius, rodRadius, 1, 128, 1, true);
     rodMesh = new THREE.Mesh(geometry, material);
     rodMesh.rotation.z = Math.PI / 2;
     rodMesh.castShadow = true;
