@@ -51,7 +51,7 @@ let currentLength = 2.4;
 let autoAdjustCamera = true;
 let targetDiameter = 0.019;
 let currentDiameter = 0.019;
-let currentColor = 'chrome';
+let currentColor = 'branco';
 let currentSupportType = '1p';
 let targetBrackets = 3;
 let currentBrackets = 3;
@@ -64,34 +64,18 @@ let bracketsArray = [];
 
 // Materiais Físicos de Alta Qualidade
 const materials = {
-    'chrome': new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        metalness: 1.0,
-        roughness: 0.15,
-        envMapIntensity: 1.0,
-        side: THREE.DoubleSide
-    }),
-    'gold': new THREE.MeshStandardMaterial({
-        color: 0xffcc00,
-        metalness: 1.0,
-        roughness: 0.2,
-        envMapIntensity: 1.0,
-        side: THREE.DoubleSide
-    }),
-    'black': new THREE.MeshStandardMaterial({
-        color: 0x111111,
-        metalness: 0.3,
-        roughness: 0.6,
-        envMapIntensity: 0.5,
-        side: THREE.DoubleSide
-    }),
-    'white': new THREE.MeshStandardMaterial({
-        color: 0xf5f5f5,
-        metalness: 0.1,
-        roughness: 0.4,
-        envMapIntensity: 0.5,
-        side: THREE.DoubleSide
-    })
+    'azul': new THREE.MeshStandardMaterial({ color: 0x85b8eb, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'branco': new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'cerejeira': new THREE.MeshStandardMaterial({ color: 0xbb7b01, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'imbuia': new THREE.MeshStandardMaterial({ color: 0x351f14, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'marfim': new THREE.MeshStandardMaterial({ color: 0xcec741, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'mogno': new THREE.MeshStandardMaterial({ color: 0x870d13, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'ouro_velho': new THREE.MeshStandardMaterial({ color: 0x4f3b11, metalness: 0.8, roughness: 0.3, envMapIntensity: 1.0, side: THREE.DoubleSide }),
+    'palha': new THREE.MeshStandardMaterial({ color: 0xddd57c, metalness: 0.1, roughness: 0.5, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'preto': new THREE.MeshStandardMaterial({ color: 0x1b1619, metalness: 0.3, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'rosa': new THREE.MeshStandardMaterial({ color: 0x1b1619, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'titanio': new THREE.MeshStandardMaterial({ color: 0x1b1619, metalness: 0.8, roughness: 0.2, envMapIntensity: 1.0, side: THREE.DoubleSide }),
+    'verde': new THREE.MeshStandardMaterial({ color: 0xa7e2b5, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide })
 };
 
 let varaoGroup = new THREE.Group();
@@ -276,10 +260,18 @@ function updateStoreLinks() {
     if (!shopeeBtn || !targetLength) return;
 
     const corMap = {
-        'chrome': 'Cromado',
-        'gold': 'Dourado',
-        'black': 'Preto',
-        'white': 'Branco'
+        'azul': 'Azul',
+        'branco': 'Branco',
+        'cerejeira': 'Cerejeira',
+        'imbuia': 'Imbuia',
+        'marfim': 'Marfim',
+        'mogno': 'Mogno',
+        'ouro_velho': 'Ouro Velho',
+        'palha': 'Palha',
+        'preto': 'Preto',
+        'rosa': 'Rosa',
+        'titanio': 'Titânio',
+        'verde': 'Verde'
     };
     
     const espessura = targetDiameter === 0.019 ? '19mm' : '28mm';
