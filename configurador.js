@@ -162,8 +162,8 @@ function rebuildGeometries() {
             base = new THREE.Mesh(baseGeo, material);
             base.rotation.x = Math.PI / 2;
         } else {
-            // Suporte 2p (2 furos) com base retangular larga
-            baseGeo = new THREE.BoxGeometry(0.07, 0.03, 0.01);
+            // Suporte 2p (2 furos) com base retangular (vertical)
+            baseGeo = new THREE.BoxGeometry(0.025, 0.07, 0.01);
             base = new THREE.Mesh(baseGeo, material);
         }
         
