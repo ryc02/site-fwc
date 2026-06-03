@@ -170,10 +170,52 @@ function rebuildGeometries() {
         
         let baseGroup = new THREE.Group();
         if (currentSupportType === '1p') {
-            const baseGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 64);
-            const base = new THREE.Mesh(baseGeo, material);
-            base.rotation.x = Math.PI / 2;
-            baseGroup.add(base);
+            // Suporte 1p: Base circular oca com duto central
+            const radius = 0.025; // raio da base circular
+            const wall = 0.002; // espessura da parede da base
+            
+            // 1. Casca Externa (Cilindro Oco)
+            const outerShape = new THREE.Shape();
+            outerShape.absarc(0, 0, radius, 0, Math.PI * 2, false);
+            
+            const innerShape = new THREE.Path();
+            innerShape.absarc(0, 0, radius - wall, 0, Math.PI * 2, false);
+            outerShape.holes.push(innerShape);
+            
+            const shellExtrudeSettings = { depth: 0.015, bevelEnabled: false };
+            const shellGeo = new THREE.ExtrudeGeometry(outerShape, shellExtrudeSettings);
+            shellGeo.center();
+            const shell = new THREE.Mesh(shellGeo, material);
+            baseGroup.add(shell);
+            
+            // 2. Placa Frontal com Furo Central Vazado
+            const frontShape = new THREE.Shape();
+            frontShape.absarc(0, 0, radius, 0, Math.PI * 2, false);
+            
+            const screwHole = new THREE.Path();
+            screwHole.absarc(0, 0, 0.0025, 0, Math.PI * 2, false);
+            frontShape.holes.push(screwHole);
+            
+            const frontExtrudeSettings = { depth: 0.002, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.0005, bevelThickness: 0.0005 };
+            const frontGeo = new THREE.ExtrudeGeometry(frontShape, frontExtrudeSettings);
+            frontGeo.center();
+            const frontPlate = new THREE.Mesh(frontGeo, material);
+            frontPlate.position.set(0, 0, 0.0075 + 0.001);
+            baseGroup.add(frontPlate);
+            
+            // 3. Duto do Parafuso Central (Pilar Vazado interno)
+            const postShape = new THREE.Shape();
+            postShape.absarc(0, 0, 0.0045, 0, Math.PI * 2, false);
+            const postHole = new THREE.Path();
+            postHole.absarc(0, 0, 0.0025, 0, Math.PI * 2, false);
+            postShape.holes.push(postHole);
+            
+            const postGeo = new THREE.ExtrudeGeometry(postShape, { depth: 0.015, bevelEnabled: false });
+            postGeo.center();
+            
+            const post = new THREE.Mesh(postGeo, material);
+            post.position.set(0, 0, 0); // No centro exato
+            baseGroup.add(post);
         } else {
             // Suporte 2p: Estrutura CAD (Oca e Vazada)
             const w = 0.030; // largura máxima
