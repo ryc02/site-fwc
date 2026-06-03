@@ -74,7 +74,7 @@ const materials = {
     'palha': new THREE.MeshStandardMaterial({ color: 0xddd57c, metalness: 0.1, roughness: 0.5, envMapIntensity: 0.5, side: THREE.DoubleSide }),
     'preto': new THREE.MeshStandardMaterial({ color: 0x1b1619, metalness: 0.3, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
     'rosa': new THREE.MeshStandardMaterial({ color: 0xe49bc9, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide }),
-    'titanio': new THREE.MeshStandardMaterial({ color: 0x79787d, metalness: 0.8, roughness: 0.2, envMapIntensity: 1.0, side: THREE.DoubleSide }),
+    'titanio': new THREE.MeshStandardMaterial({ color: 0x9e9fa4, metalness: 0.8, roughness: 0.2, envMapIntensity: 1.0, side: THREE.DoubleSide }),
     'verde': new THREE.MeshStandardMaterial({ color: 0xa7e2b5, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide })
 };
 
