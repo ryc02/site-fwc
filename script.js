@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isMobile) {
         const tiktokLinks = document.querySelectorAll('a[href*="vt.tiktok.com"]');
         tiktokLinks.forEach(link => {
-            link.href = "https://www.tiktok.com/@fwc_solucoes";
+            link.href = "https://www.tiktok.com/@fwcsolucoes";
         });
     }
 });
