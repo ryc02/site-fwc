@@ -606,9 +606,30 @@ if (arBtn && arVideo && canvasContainer) {
                 // Torna o container transparente para o vídeo aparecer atrás do canvas (o WebGLRenderer já possui alpha: true)
                 canvasContainer.style.background = 'transparent';
                 
+                // UX Melhorada: Esconder painel lateral e forçar 100vh
+                const configPanel = document.querySelector('.config-panel');
+                if (configPanel) configPanel.style.display = 'none';
+                canvasContainer.style.height = '100vh'; // Força altura total no celular
+                
+                // Muda comportamento do OrbitControls: Arrastar para mover (Pan) em vez de girar
+                controls.enableRotate = false;
+                controls.enablePan = true;
+                
                 // Atualiza o botão
-                arBtn.innerHTML = '<iconify-icon icon="mdi:camera-off-outline" style="font-size: 1.2rem;"></iconify-icon> Desligar Câmera';
+                arBtn.innerHTML = '<iconify-icon icon="mdi:camera-off-outline" style="font-size: 1.2rem;"></iconify-icon> Sair da Parede';
                 arBtn.style.background = 'rgba(238, 77, 45, 0.9)'; // Vermelho Shopee
+                
+                // Avisa o usuário na tela sobre as novas ações
+                const viewControls = document.querySelector('.view-controls');
+                if (viewControls) {
+                    viewControls.innerHTML = '<span><iconify-icon icon="mdi:cursor-move"></iconify-icon> Arraste para mover</span><span><iconify-icon icon="mdi:magnify-plus-outline"></iconify-icon> Pinça p/ Zoom</span>';
+                }
+                
+                // Redimensiona o canvas para nova área cheia
+                renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+                camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+                camera.updateProjectionMatrix();
+
                 isARActive = true;
                 
             } catch (err) {
@@ -628,9 +649,32 @@ if (arBtn && arVideo && canvasContainer) {
             // Restaura o fundo cinza/branco original
             canvasContainer.style.background = '';
             
+            // Restaura o painel lateral
+            const configPanel = document.querySelector('.config-panel');
+            if (configPanel) configPanel.style.display = 'flex';
+            canvasContainer.style.height = ''; // Remove 100vh forçado
+            
+            // Restaura comportamento do OrbitControls: Girar em vez de Arrastar
+            controls.enableRotate = true;
+            controls.enablePan = false;
+            
             // Restaura o botão
             arBtn.innerHTML = '<iconify-icon icon="mdi:camera-outline" style="font-size: 1.2rem;"></iconify-icon> Ver na Minha Parede';
             arBtn.style.background = 'rgba(0,0,0,0.7)';
+            
+            // Restaura labels na tela
+            const viewControls = document.querySelector('.view-controls');
+            if (viewControls) {
+                viewControls.innerHTML = '<span><iconify-icon icon="mdi:gesture-swipe-horizontal"></iconify-icon> Girar</span><span><iconify-icon icon="mdi:magnify-plus-outline"></iconify-icon> Zoom</span>';
+            }
+            
+            // Redimensiona de volta
+            setTimeout(() => {
+                renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+                camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+                camera.updateProjectionMatrix();
+            }, 50); // Pequeno atraso para o flexbox se reajustar
+            
             isARActive = false;
         }
     });
