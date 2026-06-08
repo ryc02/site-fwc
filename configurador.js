@@ -561,3 +561,22 @@ if (!isMobile) {
         link.href = "https://www.tiktok.com/@fwcsolucoes";
     });
 }
+
+// 5. Compartilhamento via WhatsApp
+const whatsappBtn = document.getElementById('whatsapp-share-btn');
+if (whatsappBtn) {
+    whatsappBtn.addEventListener('click', () => {
+        const cor = currentColor.charAt(0).toUpperCase() + currentColor.slice(1).replace('_', ' ');
+        const espessura = Math.round(targetDiameter * 1000) + 'mm';
+        const suporte = currentSupportType === '1p' ? '1 Furo' : '2 Furos';
+        
+        let texto = `*Olha esse varão de cortina que eu montei!* 🤩\n\n`;
+        texto += `🎨 *Cor:* ${cor}\n`;
+        texto += `📏 *Espessura:* ${espessura}\n`;
+        texto += `🔩 *Suporte:* ${suporte}\n\n`;
+        texto += `O que achou dessa configuração? Dá uma olhada no simulador 3D da F.W.C Soluções: https://venner.vercel.app/configurador.html`;
+
+        const encodedText = encodeURIComponent(texto);
+        window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+    });
+}
