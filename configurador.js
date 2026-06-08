@@ -725,8 +725,22 @@ if (navigator.xr) {
 
 if (xrMeasureBtn) {
     xrMeasureBtn.addEventListener('click', () => {
-        // Inicia a sessão AR
-        navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['hit-test'] }).then(onSessionStarted);
+        // Esconde o painel para a câmera ficar em tela cheia
+        const configPanel = document.querySelector('.config-panel');
+        if (configPanel) configPanel.style.display = 'none';
+        canvasContainer.style.height = '100vh';
+
+        // Inicia a sessão AR pedindo dom-overlay para podermos usar HTML em cima da câmera
+        navigator.xr.requestSession('immersive-ar', { 
+            requiredFeatures: ['hit-test'],
+            optionalFeatures: ['dom-overlay'],
+            domOverlay: { root: document.body }
+        }).then(onSessionStarted).catch(err => {
+            console.error("Erro no WebXR", err);
+            alert("Erro ao abrir a câmera AR: " + err.message);
+            if (configPanel) configPanel.style.display = 'flex';
+            canvasContainer.style.height = '';
+        });
     });
 }
 
@@ -738,9 +752,13 @@ function onSelectPoint() {
     if (xrReticle.visible) {
         if (!xrPoint1) {
             xrPoint1 = new THREE.Vector3().setFromMatrixPosition(xrReticle.matrix);
-            // Muda cor para indicar que marcou o primeiro ponto
-            xrReticle.material.color.setHex(0xff0000);
-            alert("Ponto inicial marcado! Agora aponte para a outra ponta da janela e toque na tela de novo.");
+            xrReticle.material.color.setHex(0xff0000); // Fica vermelho após o primeiro clique
+            
+            // Avisa via DOM em vez de alert
+            const viewControls = document.querySelector('.view-controls');
+            if (viewControls) {
+                viewControls.innerHTML = '<span style="color:red; font-size: 1.2rem;">Ponto 1 marcado! Toque na outra ponta.</span>';
+            }
         } else if (!xrPoint2) {
             xrPoint2 = new THREE.Vector3().setFromMatrixPosition(xrReticle.matrix);
             
@@ -752,19 +770,24 @@ function onSelectPoint() {
             const unitSelect = document.getElementById('medida-unidade');
             
             if (inputField) {
-                // Sempre joga em metros
                 unitSelect.value = 'm';
                 inputField.value = distance.toFixed(2);
                 calcularMedida(); // Atualiza os resultados
             }
             
-            alert(`Medida Capturada: ${distance.toFixed(2)} metros!`);
-            
-            // Encerra a sessão XR
-            const session = renderer.xr.getSession();
-            if (session) {
-                session.end();
+            // Mostra o resultado grande na tela antes de fechar
+            const viewControls = document.querySelector('.view-controls');
+            if (viewControls) {
+                viewControls.innerHTML = `<span style="color:#25D366; font-size: 1.5rem; font-weight: bold;">${distance.toFixed(2)}m! Fechando...</span>`;
             }
+            
+            // Encerra a sessão XR após 2 segundos
+            setTimeout(() => {
+                const session = renderer.xr.getSession();
+                if (session) {
+                    session.end();
+                }
+            }, 2000);
         }
     }
 }
@@ -781,7 +804,11 @@ function onSessionStarted(session) {
     xrHitTestSource = null;
     xrReticle.material.color.setHex(0x00ff00);
     
-    alert("Escaneie o ambiente movendo o celular para os lados até aparecer um anel verde. Toque na tela para marcar a primeira ponta da janela.");
+    // Muda a instrução na tela
+    const viewControls = document.querySelector('.view-controls');
+    if (viewControls) {
+        viewControls.innerHTML = '<span style="font-size:1.1rem;">Escaneie o chão/parede e toque no Anel Verde.</span>';
+    }
 
     session.requestReferenceSpace('viewer').then((referenceSpace) => {
         session.requestHitTestSource({ space: referenceSpace }).then((source) => {
@@ -795,7 +822,17 @@ function onSessionEnded() {
     xrHitTestSource = null;
     xrReticle.visible = false;
     
-    // O WebXR desliga o canvas padrão, garantimos que ele volte a renderizar a cena normal
+    // Restaura o painel lateral
+    const configPanel = document.querySelector('.config-panel');
+    if (configPanel) configPanel.style.display = 'flex';
+    canvasContainer.style.height = ''; 
+    
+    // Restaura labels originais
+    const viewControls = document.querySelector('.view-controls');
+    if (viewControls) {
+        viewControls.innerHTML = '<span><iconify-icon icon="mdi:gesture-swipe-horizontal"></iconify-icon> Girar</span><span><iconify-icon icon="mdi:magnify-plus-outline"></iconify-icon> Zoom</span>';
+    }
+    
     renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
     camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
     camera.updateProjectionMatrix();
