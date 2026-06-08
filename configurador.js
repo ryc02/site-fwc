@@ -581,3 +581,57 @@ if (whatsappBtn) {
         window.open(`https://wa.me/?text=${encodedText}`, '_blank');
     });
 }
+
+// --------------------------------------------------------
+// Lógica de Realidade Aumentada (Câmera Fundo)
+// --------------------------------------------------------
+const arBtn = document.getElementById('ar-toggle-btn');
+const arVideo = document.getElementById('ar-video');
+const canvasContainer = document.getElementById('canvas-container');
+let cameraStream = null;
+let isARActive = false;
+
+if (arBtn && arVideo && canvasContainer) {
+    arBtn.addEventListener('click', async () => {
+        if (!isARActive) {
+            try {
+                // Solicita acesso à câmera traseira (environment)
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                
+                arVideo.srcObject = cameraStream;
+                arVideo.style.display = 'block';
+                
+                // Torna o container transparente para o vídeo aparecer atrás do canvas (o WebGLRenderer já possui alpha: true)
+                canvasContainer.style.background = 'transparent';
+                
+                // Atualiza o botão
+                arBtn.innerHTML = '<iconify-icon icon="mdi:camera-off-outline" style="font-size: 1.2rem;"></iconify-icon> Desligar Câmera';
+                arBtn.style.background = 'rgba(238, 77, 45, 0.9)'; // Vermelho Shopee
+                isARActive = true;
+                
+            } catch (err) {
+                console.error("Erro ao acessar a câmera: ", err);
+                alert("Não foi possível acessar a câmera do seu dispositivo. Verifique as permissões do seu navegador.");
+            }
+        } else {
+            // Desativa a câmera
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            arVideo.style.display = 'none';
+            arVideo.srcObject = null;
+            
+            // Restaura o fundo cinza/branco original
+            canvasContainer.style.background = '';
+            
+            // Restaura o botão
+            arBtn.innerHTML = '<iconify-icon icon="mdi:camera-outline" style="font-size: 1.2rem;"></iconify-icon> Ver na Minha Parede';
+            arBtn.style.background = 'rgba(0,0,0,0.7)';
+            isARActive = false;
+        }
+    });
+}
