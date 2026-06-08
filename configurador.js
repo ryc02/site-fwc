@@ -570,11 +570,12 @@ if (whatsappBtn) {
         const espessura = Math.round(targetDiameter * 1000) + 'mm';
         const suporte = currentSupportType === '1p' ? '1 Furo' : '2 Furos';
         
-        let texto = `*Olha esse varão de cortina que eu montei!* 🤩\n\n`;
-        texto += `🎨 *Cor:* ${cor}\n`;
-        texto += `📏 *Espessura:* ${espessura}\n`;
-        texto += `🔩 *Suporte:* ${suporte}\n\n`;
-        texto += `O que achou dessa configuração? Dá uma olhada no simulador 3D da F.W.C Soluções: https://fwcsolucoes.vercel.app/configurador.html`;
+        let texto = `*Acabei de simular o varão de cortina ideal para minha casa!* 🤩🏡\n\n`;
+        texto += `✅ *Cor:* ${cor}\n`;
+        texto += `✅ *Espessura:* ${espessura}\n`;
+        texto += `✅ *Suporte:* ${suporte}\n\n`;
+        texto += `Dá uma olhada em como ficou ou monte o seu no simulador oficial da F.W.C Soluções 👇\n\n`;
+        texto += `🔗 https://fwcsolucoes.vercel.app/configurador.html`;
 
         const encodedText = encodeURIComponent(texto);
         window.open(`https://wa.me/?text=${encodedText}`, '_blank');
