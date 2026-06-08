@@ -322,8 +322,8 @@ function rebuildGeometries() {
 rebuildGeometries();
 
 // Animação/Render Loop com Física Elástica (LERP)
-function animate() {
-    requestAnimationFrame(animate);
+renderer.setAnimationLoop(animate);
+function animate(timestamp, frame) {
     controls.update();
     
     // Lerp suave para o comprimento do varão (Efeito Elástico)
@@ -384,9 +384,22 @@ function animate() {
         varaoGroup.rotation.x += 0.002;
     }
 
+    // Lógica do WebXR Hit Test
+    if (xrHitTestSource && frame) {
+        const referenceSpace = renderer.xr.getReferenceSpace();
+        const hitTestResults = frame.getHitTestResults(xrHitTestSource);
+        if (hitTestResults.length > 0) {
+            const hit = hitTestResults[0];
+            const pose = hit.getPose(referenceSpace);
+            xrReticle.visible = true;
+            xrReticle.matrix.fromArray(pose.transform.matrix);
+        } else {
+            xrReticle.visible = false;
+        }
+    }
+
     renderer.render(scene, camera);
 }
-animate();
 
 // Responsividade
 window.addEventListener('resize', () => {
@@ -582,8 +595,9 @@ if (whatsappBtn) {
     });
 }
 
+
 // --------------------------------------------------------
-// Lógica de Realidade Aumentada (Câmera Fundo)
+// Lógica de Realidade Aumentada (Câmera Fundo Básica)
 // --------------------------------------------------------
 const arBtn = document.getElementById('ar-toggle-btn');
 const arVideo = document.getElementById('ar-video');
@@ -679,3 +693,111 @@ if (arBtn && arVideo && canvasContainer) {
         }
     });
 }
+
+// --------------------------------------------------------
+// Lógica de Trena Virtual (WebXR API - Android Apenas)
+// --------------------------------------------------------
+renderer.xr.enabled = true;
+let xrHitTestSource = null;
+let xrHitTestSourceRequested = false;
+let xrPoint1 = null;
+let xrPoint2 = null;
+
+// Cria o retículo (alvo) de mira
+const xrReticle = new THREE.Mesh(
+    new THREE.RingGeometry(0.05, 0.06, 32).rotateX(-Math.PI / 2),
+    new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+);
+xrReticle.matrixAutoUpdate = false;
+xrReticle.visible = false;
+scene.add(xrReticle);
+
+const xrMeasureBtn = document.getElementById('xr-measure-btn');
+
+// Checa suporte nativo
+if (navigator.xr) {
+    navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+        if (supported && xrMeasureBtn) {
+            xrMeasureBtn.style.display = 'flex'; // Mostra botão
+        }
+    });
+}
+
+if (xrMeasureBtn) {
+    xrMeasureBtn.addEventListener('click', () => {
+        // Inicia a sessão AR
+        navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['hit-test'] }).then(onSessionStarted);
+    });
+}
+
+const controller = renderer.xr.getController(0);
+controller.addEventListener('select', onSelectPoint);
+scene.add(controller);
+
+function onSelectPoint() {
+    if (xrReticle.visible) {
+        if (!xrPoint1) {
+            xrPoint1 = new THREE.Vector3().setFromMatrixPosition(xrReticle.matrix);
+            // Muda cor para indicar que marcou o primeiro ponto
+            xrReticle.material.color.setHex(0xff0000);
+            alert("Ponto inicial marcado! Agora aponte para a outra ponta da janela e toque na tela de novo.");
+        } else if (!xrPoint2) {
+            xrPoint2 = new THREE.Vector3().setFromMatrixPosition(xrReticle.matrix);
+            
+            // Calcula a distância em metros
+            const distance = xrPoint1.distanceTo(xrPoint2);
+            
+            // Atualiza o input da interface
+            const inputField = document.getElementById('janela-width');
+            const unitSelect = document.getElementById('medida-unidade');
+            
+            if (inputField) {
+                // Sempre joga em metros
+                unitSelect.value = 'm';
+                inputField.value = distance.toFixed(2);
+                calcularMedida(); // Atualiza os resultados
+            }
+            
+            alert(`Medida Capturada: ${distance.toFixed(2)} metros!`);
+            
+            // Encerra a sessão XR
+            const session = renderer.xr.getSession();
+            if (session) {
+                session.end();
+            }
+        }
+    }
+}
+
+function onSessionStarted(session) {
+    session.addEventListener('end', onSessionEnded);
+    renderer.xr.setReferenceSpaceType('local');
+    renderer.xr.setSession(session);
+    
+    // Reseta variaveis
+    xrPoint1 = null;
+    xrPoint2 = null;
+    xrHitTestSourceRequested = false;
+    xrHitTestSource = null;
+    xrReticle.material.color.setHex(0x00ff00);
+    
+    alert("Escaneie o ambiente movendo o celular para os lados até aparecer um anel verde. Toque na tela para marcar a primeira ponta da janela.");
+
+    session.requestReferenceSpace('viewer').then((referenceSpace) => {
+        session.requestHitTestSource({ space: referenceSpace }).then((source) => {
+            xrHitTestSource = source;
+        });
+    });
+}
+
+function onSessionEnded() {
+    xrHitTestSourceRequested = false;
+    xrHitTestSource = null;
+    xrReticle.visible = false;
+    
+    // O WebXR desliga o canvas padrão, garantimos que ele volte a renderizar a cena normal
+    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+    camera.updateProjectionMatrix();
+}
+
