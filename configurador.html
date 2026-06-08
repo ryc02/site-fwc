@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurador 3D de Varões | F.W.C Soluções</title>
+    <meta name="description" content="Use nosso simulador 3D para descobrir como medir o varão de cortina. Encontre o tamanho ideal para varão blackout e sala.">
+    <title>Simulador 3D: Tamanho Ideal de Varão para Cortina | F.W.C Soluções</title>
 
-    <meta property="og:title" content="Monte seu Varão 3D | F.W.C Soluções">
-    <meta property="og:description" content="Descubra a medida ideal e visualize o seu varão em 3D antes de comprar.">
+    <meta property="og:title" content="Simulador 3D: Tamanho Ideal de Varão para Cortina | F.W.C Soluções">
+    <meta property="og:description" content="Use nosso simulador 3D para descobrir como medir o varão de cortina. Encontre o tamanho ideal para varão blackout e sala.">
     <meta property="og:image" content="https://fwcsolucoes.vercel.app/og-image.png">
 
     <!-- Fontes e Estilos Principais -->
@@ -268,6 +269,24 @@
             }
         }
     </style>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'SEU_PIXEL_ID_AQUI');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=SEU_PIXEL_ID_AQUI&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 
 <body>
@@ -390,5 +409,39 @@
     </script>
     <script type="module" src="configurador.js"></script>
 
+    <!-- Rastreamento de Eventos - Meta Pixel -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cliques na Shopee
+            const shopeeLinks = document.querySelectorAll('a[href*="shopee.com.br"]');
+            shopeeLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (typeof fbq === 'function') {
+                        fbq('trackCustom', 'ClickShopee');
+                    }
+                });
+            });
+
+            // Cliques no TikTok Shop
+            const tiktokLinks = document.querySelectorAll('a[href*="tiktok.com"]');
+            tiktokLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (typeof fbq === 'function') {
+                        fbq('trackCustom', 'ClickTikTok');
+                    }
+                });
+            });
+
+            // Cliques no Botão de Compartilhar no WhatsApp
+            const whatsappBtn = document.getElementById('whatsapp-share-btn');
+            if (whatsappBtn) {
+                whatsappBtn.addEventListener('click', function() {
+                    if (typeof fbq === 'function') {
+                        fbq('trackCustom', 'ShareWhatsApp');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

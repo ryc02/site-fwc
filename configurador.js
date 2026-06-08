@@ -574,7 +574,7 @@ if (whatsappBtn) {
         texto += `🎨 *Cor:* ${cor}\n`;
         texto += `📏 *Espessura:* ${espessura}\n`;
         texto += `🔩 *Suporte:* ${suporte}\n\n`;
-        texto += `O que achou dessa configuração? Dá uma olhada no simulador 3D da F.W.C Soluções: https://venner.vercel.app/configurador.html`;
+        texto += `O que achou dessa configuração? Dá uma olhada no simulador 3D da F.W.C Soluções: https://fwcsolucoes.vercel.app/configurador.html`;
 
         const encodedText = encodeURIComponent(texto);
         window.open(`https://wa.me/?text=${encodedText}`, '_blank');
