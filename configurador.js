@@ -729,6 +729,7 @@ if (xrMeasureBtn) {
         const configPanel = document.querySelector('.config-panel');
         if (configPanel) configPanel.style.display = 'none';
         canvasContainer.style.height = '100vh';
+        document.body.classList.add('ar-mode');
 
         // Inicia a sessão AR pedindo dom-overlay para podermos usar HTML em cima da câmera
         navigator.xr.requestSession('immersive-ar', { 
@@ -740,6 +741,7 @@ if (xrMeasureBtn) {
             alert("Erro ao abrir a câmera AR: " + err.message);
             if (configPanel) configPanel.style.display = 'flex';
             canvasContainer.style.height = '';
+            document.body.classList.remove('ar-mode');
         });
     });
 }
@@ -826,6 +828,7 @@ function onSessionEnded() {
     const configPanel = document.querySelector('.config-panel');
     if (configPanel) configPanel.style.display = 'flex';
     canvasContainer.style.height = ''; 
+    document.body.classList.remove('ar-mode');
     
     // Restaura labels originais
     const viewControls = document.querySelector('.view-controls');
