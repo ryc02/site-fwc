@@ -393,6 +393,23 @@ function animate(timestamp, frame) {
             const pose = hit.getPose(referenceSpace);
             xrReticle.visible = true;
             xrReticle.matrix.fromArray(pose.transform.matrix);
+            
+            // Atualiza a linha da fita métrica em tempo real se o Ponto 1 existir e o Ponto 2 não
+            if (xrPoint1 && !xrPoint2 && xrLine) {
+                const currentPos = new THREE.Vector3().setFromMatrixPosition(xrReticle.matrix);
+                const positions = xrLine.geometry.attributes.position.array;
+                positions[3] = currentPos.x;
+                positions[4] = currentPos.y;
+                positions[5] = currentPos.z;
+                xrLine.geometry.attributes.position.needsUpdate = true;
+                
+                // Atualiza a tela com a medida parcial em tempo real
+                const viewControls = document.querySelector('.view-controls');
+                if (viewControls) {
+                    const partialDist = xrPoint1.distanceTo(currentPos);
+                    viewControls.innerHTML = `<span style="color:#00e5ff; font-size: 1.2rem; font-weight: bold;">Esticando: ${partialDist.toFixed(2)}m...</span>`;
+                }
+            }
         } else {
             xrReticle.visible = false;
         }
@@ -702,6 +719,7 @@ let xrHitTestSource = null;
 let xrHitTestSourceRequested = false;
 let xrPoint1 = null;
 let xrPoint2 = null;
+let xrLine = null;
 
 // Cria o retículo (alvo) de mira
 const xrReticle = new THREE.Mesh(
@@ -756,6 +774,12 @@ function onSelectPoint() {
             xrPoint1 = new THREE.Vector3().setFromMatrixPosition(xrReticle.matrix);
             xrReticle.material.color.setHex(0xff0000); // Fica vermelho após o primeiro clique
             
+            // Cria a linha da fita métrica
+            const material = new THREE.LineBasicMaterial({ color: 0x00e5ff, linewidth: 3 });
+            const geometry = new THREE.BufferGeometry().setFromPoints([xrPoint1, xrPoint1.clone()]);
+            xrLine = new THREE.Line(geometry, material);
+            scene.add(xrLine);
+            
             // Avisa via DOM em vez de alert
             const viewControls = document.querySelector('.view-controls');
             if (viewControls) {
@@ -804,6 +828,7 @@ function onSessionStarted(session) {
     xrPoint2 = null;
     xrHitTestSourceRequested = false;
     xrHitTestSource = null;
+    if (xrLine) { scene.remove(xrLine); xrLine = null; }
     xrReticle.material.color.setHex(0x00ff00);
     
     // Muda a instrução na tela
@@ -823,6 +848,7 @@ function onSessionEnded() {
     xrHitTestSourceRequested = false;
     xrHitTestSource = null;
     xrReticle.visible = false;
+    if (xrLine) { scene.remove(xrLine); xrLine = null; }
     
     // Restaura o painel lateral
     const configPanel = document.querySelector('.config-panel');
