@@ -341,7 +341,7 @@ p {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    left: 0;
     width: 50%;
     height: 100%;
     background: linear-gradient(
@@ -350,14 +350,14 @@ p {
         rgba(255,255,255,0.4) 50%,
         rgba(255,255,255,0) 100%
     );
-    transform: skewX(-25deg);
+    transform: translateX(-200%) skewX(-25deg);
     animation: btn-shimmer 4s infinite;
 }
 
 @keyframes btn-shimmer {
-    0% { left: -100%; }
-    20% { left: 200%; }
-    100% { left: 200%; }
+    0% { transform: translateX(-200%) skewX(-25deg); }
+    20% { transform: translateX(400%) skewX(-25deg); }
+    100% { transform: translateX(400%) skewX(-25deg); }
 }
 
 .btn-primary:hover {
@@ -368,7 +368,7 @@ p {
 .link-arrow {
     display: inline-block;
     margin-top: 1rem;
-    color: var(--color-accent);
+    color: #c24d00;
     text-decoration: none;
     font-weight: 500;
     font-size: 1rem;
