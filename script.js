@@ -225,7 +225,9 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(animate);
     };
 
-    initHeroCanvas();
+    window.addEventListener('load', () => {
+        setTimeout(initHeroCanvas, 100);
+    });
 });
 
 
