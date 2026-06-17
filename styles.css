@@ -999,7 +999,7 @@ p {
     padding-top: var(--spacing-md);
     text-align: center;
     font-size: 0.875rem;
-    opacity: 0.6;
+    opacity: 0.9;
 }
 
 /* Animations */
