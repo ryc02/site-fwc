@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // Initial toggle and add scroll listener
-        toggleButtons();
+        requestAnimationFrame(() => toggleButtons());
         showcase.addEventListener('scroll', toggleButtons);
         
         // Handle window resize (re-calculate max scroll)
