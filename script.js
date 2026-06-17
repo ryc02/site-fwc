@@ -91,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Interactive Canvas Background (Hero Section)
     const initHeroCanvas = () => {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) return;
+
         const canvas = document.getElementById('hero-canvas');
         if (!canvas) return;
 
