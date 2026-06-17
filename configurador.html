@@ -69,13 +69,7 @@
             z-index: 10;
         }
 
-        /* Classes ativas durante o WebXR AR Mode */
-        body.ar-mode, body.ar-mode .canvas-container {
-            background: transparent !important;
-        }
-        body.ar-mode .header {
-            display: none !important;
-        }
+
 
         .view-controls span {
             font-size: 0.85rem;
@@ -303,15 +297,7 @@
     <div class="configurator-layout">
         <!-- Lado Esquerdo: 3D Canvas -->
         <div class="canvas-container" id="canvas-container">
-            <!-- Vídeo oculto para a câmera traseira -->
-            <video id="ar-video" autoplay playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: none;"></video>
-            
             <canvas id="webgl-canvas" style="position: relative; z-index: 1;"></canvas>
-            
-            <!-- Botão de Ativação do Web AR -->
-            <button id="ar-toggle-btn" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2; background: rgba(0,0,0,0.7); color: #fff; border: none; padding: 10px 20px; border-radius: 30px; font-family: 'Inter', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s;">
-                <iconify-icon icon="mdi:camera-outline" style="font-size: 1.2rem;"></iconify-icon> Ver na Minha Parede
-            </button>
 
             <div class="view-controls" style="z-index: 2;">
                 <span><iconify-icon icon="mdi:gesture-swipe-horizontal"></iconify-icon> Girar</span>
@@ -340,10 +326,7 @@
                             <option value="cm">Centímetros (cm)</option>
                         </select>
                     </div>
-                    <!-- Botão WebXR (Trena), aparecerá só no Android compatível -->
-                    <button id="xr-measure-btn" style="display: none; width: 100%; margin-top: 10px; background: var(--color-petrol); color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; align-items: center; justify-content: center; gap: 8px;">
-                        <iconify-icon icon="mdi:ruler-square"></iconify-icon> Medir com a Câmera (Inteligência 3D)
-                    </button>
+
                     <div id="resultado-medida" style="display: none;">
                         <p style="margin: 0 0 5px 0;">Kit Recomendado: <strong id="varao-recomendado" style="color: var(--color-accent);">2,40mt</strong></p>
                         
