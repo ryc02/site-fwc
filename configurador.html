@@ -4,449 +4,1206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Use nosso simulador 3D para descobrir como medir o varão de cortina. Encontre o tamanho ideal para varão blackout e sala.">
-    <title>Simulador 3D: Tamanho Ideal de Varão para Cortina | F.W.C Soluções</title>
+    <meta name="description" content="Use nosso simulador 3D para descobrir o tamanho ideal de varão de cortina. Configure cor, espessura e medida e veja em tempo real.">
+    <title>Simulador 3D | F.W.C Soluções</title>
 
-    <meta property="og:title" content="Simulador 3D: Tamanho Ideal de Varão para Cortina | F.W.C Soluções">
-    <meta property="og:description" content="Use nosso simulador 3D para descobrir como medir o varão de cortina. Encontre o tamanho ideal para varão blackout e sala.">
+    <meta property="og:title" content="Simulador 3D de Varão de Cortina | F.W.C Soluções">
+    <meta property="og:description" content="Configure seu varão em 3D: tamanho, cor e espessura. Nenhum concorrente oferece isso.">
     <meta property="og:image" content="https://fwcsolucoes.vercel.app/og-image.png">
 
-    <!-- Fontes e Estilos Principais -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=1.3">
-    
-    <!-- Ícones e Favicon -->
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script defer src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 
-    <!-- Vercel Web Analytics -->
-    <script>
-        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
+    <!-- Analytics -->
+    <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
     <script defer src="/_vercel/insights/script.js"></script>
 
     <style>
-        /* Estilos específicos do configurador que não afetam a home */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background-color: #f5f7fa;
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: #0E0E0F; color: #EFEFEF; -webkit-font-smoothing: antialiased; }
+
+        /* ===== TOKENS ===== */
+        :root {
+            --panel-w: 380px;
+            --accent: #B87333;
+            --accent-light: rgba(184,115,51,0.15);
+            --accent-glow: rgba(184,115,51,0.3);
+            --surface: #1A1A1C;
+            --surface-raised: #242426;
+            --border: rgba(255,255,255,0.08);
+            --text: #EFEFEF;
+            --text-muted: #888;
+            --radius: 10px;
+            --shopee: #E84E0E;
+            --tiktok: #1a1a1a;
+            --whatsapp: #25D366;
         }
 
-        .configurator-layout {
+        /* ===== LAYOUT ===== */
+        .app {
             display: flex;
             height: 100vh;
             width: 100vw;
         }
 
-        .canvas-container {
+        /* ===== CANVAS AREA ===== */
+        .canvas-area {
             flex: 1;
             position: relative;
-            background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+            background: radial-gradient(ellipse at 40% 50%, #1c1a2e 0%, #0e0e0f 70%);
+            overflow: hidden;
         }
 
         #webgl-canvas {
+            display: block;
             width: 100%;
             height: 100%;
-            display: block;
         }
 
-        .view-controls {
+        /* Canvas overlays */
+        .canvas-topbar {
             position: absolute;
-            bottom: 30px;
+            top: 0; left: 0; right: 0;
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, rgba(14,14,15,0.8) 0%, transparent 100%);
+        }
+        .canvas-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .canvas-logo-text {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 300;
+            color: white;
+            letter-spacing: -0.03em;
+        }
+        .canvas-logo-text span { color: var(--accent); }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            background: rgba(255,255,255,0.06);
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .back-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+
+        .canvas-hint {
+            position: absolute;
+            bottom: 28px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+            gap: 16px;
+            background: rgba(14,14,15,0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 8px 20px;
         }
-
-
-
-        .view-controls span {
-            font-size: 0.85rem;
-            color: var(--color-text-secondary);
-            font-weight: 500;
+        .canvas-hint span {
             display: flex;
             align-items: center;
             gap: 5px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
         }
+        .canvas-hint iconify-icon { font-size: 1rem; }
 
-        .config-panel {
-            width: 450px;
-            background: #ffffff;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.05);
+        /* Live badge */
+        .live-badge {
+            position: absolute;
+            top: 80px;
+            left: 28px;
+            background: rgba(14,14,15,0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .live-badge-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .live-badge-value { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 300; color: var(--accent); }
+
+        /* ===== PANEL ===== */
+        .panel {
+            width: var(--panel-w);
+            flex-shrink: 0;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             height: 100%;
-            z-index: 10;
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+        .panel::-webkit-scrollbar { width: 4px; }
+        .panel::-webkit-scrollbar-track { background: transparent; }
+        .panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .panel-header {
+            padding: 28px 28px 20px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            z-index: 2;
+        }
+        .panel-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: var(--text);
+            line-height: 1.2;
+        }
+        .panel-title span { color: var(--accent); font-style: italic; }
+        .panel-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
 
-        .config-header {
-            padding: 30px;
-            border-bottom: 1px solid #eaeaea;
-        }
+        .panel-body { padding: 24px 28px; flex: 1; display: flex; flex-direction: column; gap: 28px; }
 
-        .config-header h1 {
-            font-size: 1.5rem;
-            color: var(--color-petrol);
-            margin-bottom: 5px;
-        }
-        
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            transition: color 0.2s;
-        }
-
-        .back-link:hover {
-            color: var(--color-accent);
-        }
-
-        .config-body {
-            padding: 30px;
-            flex: 1;
-        }
-
-        .config-group {
-            margin-bottom: 30px;
-        }
-
-        .config-label {
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: block;
-            color: var(--color-text-primary);
-            font-size: 1.1rem;
-        }
-
-        .color-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .color-btn {
-            width: 50px;
-            height: 50px;
+        /* Step groups */
+        .step { display: flex; flex-direction: column; gap: 12px; }
+        .step-header { display: flex; align-items: center; gap: 8px; }
+        .step-num {
+            width: 20px; height: 20px;
             border-radius: 50%;
-            border: 3px solid transparent;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .step-label { font-size: 0.82rem; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.06em; }
+
+        /* Measurement input */
+        .measurement-input {
+            display: flex;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .measurement-input:focus-within { border-color: var(--accent); }
+        .measurement-input input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 16px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+        .measurement-input input::placeholder { color: var(--text-muted); }
+        .measurement-input select {
+            background: rgba(255,255,255,0.05);
+            border: none;
+            border-left: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            padding: 0 14px;
+            outline: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        .measurement-input select option { background: #1A1A1C; }
+
+        /* Result box */
+        .result-box {
+            background: var(--accent-light);
+            border: 1px solid rgba(184,115,51,0.3);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            display: none;
+        }
+        .result-box-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+        .result-recommended { font-size: 1.3rem; font-family: 'Fraunces', serif; font-weight: 300; color: var(--text); margin-bottom: 8px; }
+        .result-recommended strong { color: var(--accent); }
+        .result-kit { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+        .result-warning { color: #E84E0E; font-size: 0.78rem; font-weight: 600; margin-top: 8px; display: none; }
+
+        /* Diameter options */
+        .diam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .opt-btn {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .opt-btn:hover { border-color: var(--accent); color: var(--text); }
+        .opt-btn.active {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+        .opt-btn .opt-sub { font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 2px; }
+        .opt-btn.active .opt-sub { color: var(--accent); opacity: 0.7; }
+
+        /* Color grid */
+        .color-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .color-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 2px solid transparent;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             position: relative;
-        }
-
-        .color-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .color-btn.active {
-            border-color: var(--color-accent);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        .color-azul { background: #85b8eb; }
-        .color-branco { background: #ffffff; border: 1px solid #ddd; }
-        .color-cerejeira { background: #bb7b01; }
-        .color-imbuia { background: #351f14; }
-        .color-marfim { background: #cec741; }
-        .color-mogno { background: #870d13; }
-        .color-ouro_velho { background: #4f3b11; }
-        .color-palha { background: #ddd57c; }
-        .color-preto { background: #1b1619; }
-        .color-rosa { background: #e49bc9; }
-        .color-titanio { background: #9e9fa4; }
-        .color-verde { background: #a7e2b5; }
-
-        .size-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .size-btn {
-            padding: 12px;
-            border: 1px solid #ddd;
-            background: #fff;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .size-btn:hover {
-            border-color: var(--color-accent);
-        }
-
-        .size-btn.active {
-            background: rgba(255, 102, 0, 0.1);
-            border-color: var(--color-accent);
-            color: var(--color-accent);
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            background: #f5f7fa;
-            border-radius: 8px;
-            padding: 5px 15px;
-            border: 1px solid #ddd;
-        }
-
-        .input-group input {
-            border: none;
-            background: transparent;
-            padding: 10px;
-            font-size: 1rem;
-            width: 100%;
             outline: none;
         }
-
-        .config-footer {
-            padding: 30px;
-            background: #fdfdfd;
-            border-top: 1px solid #eaeaea;
+        .color-btn:hover { transform: scale(1.15); }
+        .color-btn.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
+        .color-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3);
+        }
+        /* Color definitions */
+        .c-azul      { background: #85b8eb; }
+        .c-branco     { background: #f0f0f0; }
+        .c-cerejeira  { background: #bb7b01; }
+        .c-imbuia     { background: #351f14; }
+        .c-marfim     { background: #cec741; }
+        .c-mogno      { background: #870d13; }
+        .c-ouro_velho { background: #4f3b11; }
+        .c-palha      { background: #ddd57c; }
+        .c-preto      { background: #1b1619; border: 1px solid rgba(255,255,255,0.1); }
+        .c-rosa       { background: #e49bc9; }
+        .c-titanio    { background: #9e9fa4; }
+        .c-verde      { background: #a7e2b5; }
+
+        /* Color label */
+        .color-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            background: var(--accent-light);
+            border: 1px solid rgba(184,115,51,0.2);
+            border-radius: 100px;
+            display: inline-block;
+        }
+
+        /* Panel footer */
+        .panel-footer {
+            padding: 20px 28px 28px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .footer-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); text-align: center; margin-bottom: 4px; }
 
         .buy-btn {
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: 10px;
-            width: 100%;
-            padding: 16px;
-            background: var(--color-accent);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px;
+            border-radius: 100px;
+            font-size: 0.9rem;
             font-weight: 600;
-            cursor: pointer;
             text-decoration: none;
-            transition: background 0.2s, transform 0.2s;
-            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Inter', sans-serif;
         }
+        .buy-btn:hover { transform: translateY(-1px); }
+        .buy-btn:active { transform: translateY(0); }
+        .buy-btn iconify-icon { font-size: 1.1rem; }
 
-        .buy-btn:hover {
-            background: var(--color-accent-hover);
-            transform: translateY(-2px);
+        .btn-shopee { background: var(--shopee); color: white; box-shadow: 0 4px 14px rgba(232,78,14,0.35); }
+        .btn-shopee:hover { box-shadow: 0 6px 20px rgba(232,78,14,0.45); }
+
+        .btn-tiktok { background: var(--surface-raised); color: var(--text); border: 1px solid var(--border); }
+        .btn-tiktok:hover { border-color: rgba(255,255,255,0.2); }
+
+        .btn-whatsapp { background: var(--whatsapp); color: white; box-shadow: 0 4px 14px rgba(37,211,102,0.3); }
+        .btn-whatsapp:hover { box-shadow: 0 6px 20px rgba(37,211,102,0.4); }
+
+        /* Divider */
+        .divider { height: 1px; background: var(--border); }
+
+        /* ===== MODAL QR CODE ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center; z-index: 100;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-
-        #resultado-medida {
-            background: #eef2f6;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-size: 0.95rem;
-            color: var(--color-text-secondary);
-            border-left: 4px solid var(--color-petrol);
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 32px; text-align: center; max-width: 340px;
+            transform: translateY(20px); transition: transform 0.3s;
         }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-title { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--text); margin-bottom: 8px; font-weight: 300; }
+        .modal-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+        .qr-box { background: white; padding: 16px; border-radius: 8px; display: inline-block; margin-bottom: 24px; }
+        .qr-box img { display: block; width: 180px; height: 180px; }
+        .modal-close {
+            background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);
+            padding: 10px 24px; border-radius: 100px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.1); }
 
-        @media (max-width: 900px) {
-            .configurator-layout {
-                flex-direction: column-reverse;
-            }
-            .config-panel {
-                width: 100%;
-                height: 50vh;
-                border-top: 1px solid #eaeaea;
-            }
-            .canvas-container {
-                height: 50vh;
-                flex: none;
-            }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .app { flex-direction: column; }
+            .canvas-area { flex: none; height: 55vw; min-height: 260px; }
+            .panel { width: 100%; flex: 1; border-left: none; border-top: 1px solid var(--border); }
+            .panel-body { gap: 20px; }
+            .canvas-topbar { padding: 12px 16px; }
+            .live-badge { display: none; }
+            .canvas-hint { bottom: 12px; }
         }
     </style>
-
-    <!-- Meta Pixel Code -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'SEU_PIXEL_ID_AQUI');
-    fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=SEU_PIXEL_ID_AQUI&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
 </head>
 
 <body>
+<div class="app">
 
-    <div class="configurator-layout">
-        <!-- Lado Esquerdo: 3D Canvas -->
-        <div class="canvas-container" id="canvas-container">
-            <canvas id="webgl-canvas" style="position: relative; z-index: 1;"></canvas>
+    <!-- ===== CANVAS AREA ===== -->
+    <div class="canvas-area">
+        <canvas id="webgl-canvas"></canvas>
 
-            <div class="view-controls" style="z-index: 2;">
-                <span><iconify-icon icon="mdi:gesture-swipe-horizontal"></iconify-icon> Girar</span>
-                <span><iconify-icon icon="mdi:magnify-plus-outline"></iconify-icon> Zoom</span>
-            </div>
+        <!-- Top bar -->
+        <div class="canvas-topbar">
+            <a href="index.html" class="canvas-logo" aria-label="Voltar à loja">
+                <span class="canvas-logo-text">F.W.<span>C</span></span>
+            </a>
+            <a href="index.html" class="back-btn">
+                <iconify-icon icon="mdi:arrow-left" aria-hidden="true"></iconify-icon>
+                Voltar à loja
+            </a>
         </div>
 
-        <!-- Lado Direito: Painel -->
-        <div class="config-panel">
-            <div class="config-header">
-                <a href="index.html" class="back-link">
-                    <iconify-icon icon="mdi:arrow-left"></iconify-icon> Voltar para o Início
-                </a>
-                <h1>Configure seu Varão</h1>
-                <p style="font-size: 0.95rem; margin:0;">Visualize em 3D e descubra a medida ideal.</p>
-            </div>
+        <!-- Live dimension badge -->
+        <div class="live-badge" id="live-badge">
+            <span class="live-badge-label">Comprimento</span>
+            <span class="live-badge-value" id="live-length">2,40 mt</span>
+        </div>
 
-            <div class="config-body">
-                <!-- Passo 1: Tamanho da Janela -->
-                <div class="config-group">
-                    <label class="config-label">1. Qual a largura da sua janela?</label>
-                    <div class="input-group">
-                        <input type="number" id="janela-width" placeholder="Ex: 2.00" step="0.1" min="10">
-                        <select id="medida-unidade" style="border: none; background: transparent; font-weight: 500; color: #666; outline: none; cursor: pointer; padding-left: 10px; border-left: 1px solid #ddd;">
-                            <option value="m" selected>Metros (mt)</option>
-                            <option value="cm">Centímetros (cm)</option>
-                        </select>
-                    </div>
-
-                    <div id="resultado-medida" style="display: none;">
-                        <p style="margin: 0 0 5px 0;">Kit Recomendado: <strong id="varao-recomendado" style="color: var(--color-accent);">2,40mt</strong></p>
-                        
-                        <div style="background: #fff; padding: 12px; border-radius: 6px; margin: 10px 0; border: 1px solid #dee2e6;">
-                            <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: 600; color: var(--color-petrol);">Conteúdo do Kit:</p>
-                            <ul style="margin: 0; padding-left: 20px; font-size: 0.85rem; color: #555; line-height: 1.5;">
-                                <li id="qtd-barras">2 barras de 1,20 mt</li>
-                                <li id="qtd-suportes">3 suportes</li>
-                                <li>2 ponteiras</li>
-                            </ul>
-                        </div>
-
-                        <p id="aviso-maximo" style="color: #d9534f; font-weight: bold; font-size: 0.85rem; display: none;">Atenção: A medida ideal para sua janela ultrapassa 4 metros. Recomendamos a compra de múltiplos kits.</p>
-                        <small style="display: block; margin-top: 5px;">* Calculado com 20cm de sobra de cada lado para o franzimento e caimento perfeito da cortina.</small>
-                    </div>
-                </div>
-
-                <!-- Passo 2: Diâmetro -->
-                <div class="config-group">
-                    <label class="config-label">2. Escolha a Espessura</label>
-                    <div class="size-options">
-                        <button class="size-btn active" data-size="19">Fino (19mm)</button>
-                        <button class="size-btn" data-size="28">Grosso (28mm)</button>
-                    </div>
-                </div>
-
-                <!-- Passo 3: Cor -->
-                <div class="config-group">
-                    <label class="config-label">3. Escolha a Cor</label>
-                    <div class="color-options">
-                        <button class="color-btn color-branco active" data-color="branco" title="Branco"></button>
-                        <button class="color-btn color-azul" data-color="azul" title="Azul"></button>
-                        <button class="color-btn color-cerejeira" data-color="cerejeira" title="Cerejeira"></button>
-                        <button class="color-btn color-imbuia" data-color="imbuia" title="Imbuia"></button>
-                        <button class="color-btn color-marfim" data-color="marfim" title="Marfim"></button>
-                        <button class="color-btn color-mogno" data-color="mogno" title="Mogno"></button>
-                        <button class="color-btn color-ouro_velho" data-color="ouro_velho" title="Ouro Velho"></button>
-                        <button class="color-btn color-palha" data-color="palha" title="Palha"></button>
-                        <button class="color-btn color-preto" data-color="preto" title="Preto"></button>
-                        <button class="color-btn color-rosa" data-color="rosa" title="Rosa"></button>
-                        <button class="color-btn color-titanio" data-color="titanio" title="Titânio"></button>
-                        <button class="color-btn color-verde" data-color="verde" title="Verde"></button>
-                    </div>
-                </div>
-
-                <!-- Passo 4: Tipo de Suporte -->
-                <div class="config-group">
-                    <label class="config-label">4. Tipo de Suporte</label>
-                    <div class="size-options">
-                        <button class="support-btn size-btn active" data-support="1p">1 Furo (Simples)</button>
-                        <button class="support-btn size-btn" data-support="2p">2 Furos (Compacto)</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="config-footer">
-                <button id="whatsapp-share-btn" class="buy-btn" style="background: #25D366; color: white; margin-bottom: 20px;">
-                    <iconify-icon icon="simple-icons:whatsapp" style="font-size: 1.4rem;"></iconify-icon>
-                    Compartilhar Modelo no WhatsApp
-                </button>
-
-                <p style="text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--color-petrol); margin-top: 0; margin-bottom: 15px;">Compre em nossas lojas oficiais:</p>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <a id="shopee-btn" href="https://shopee.com.br/fwcsolucoesemmanutencaoltda?entryPoint=ShopBySearch&searchKeyword=f.w.c" target="_blank" class="buy-btn" style="background: #ee4d2d;">
-                        <iconify-icon icon="simple-icons:shopee" style="font-size: 1.4rem;"></iconify-icon>
-                        Shopee
-                    </a>
-                    <a id="tiktok-btn" href="https://vt.tiktok.com/ZSxE3QPh8/?page=TikTokShop" target="_blank" class="buy-btn" style="background: #000000;">
-                        <iconify-icon icon="simple-icons:tiktok" style="font-size: 1.4rem;"></iconify-icon>
-                        TikTok Shop
-                    </a>
-                </div>
-            </div>
+        <!-- Controls hint -->
+        <div class="canvas-hint">
+            <span><iconify-icon icon="mdi:gesture-swipe-horizontal"></iconify-icon> Arrastar para girar</span>
+            <span><iconify-icon icon="mdi:magnify-plus-outline"></iconify-icon> Scroll para zoom</span>
         </div>
     </div>
 
-    <!-- Import Three.js and OrbitControls -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
+    <!-- ===== CONFIGURATION PANEL ===== -->
+    <aside class="panel" role="complementary" aria-label="Painel de configuração">
+
+        <div class="panel-header">
+            <h1 class="panel-title">Configure seu <span>varão</span></h1>
+            <p class="panel-subtitle">Visualização 3D em tempo real · 12 cores disponíveis</p>
+        </div>
+
+        <div class="panel-body">
+
+            <!-- Step 1: Tamanho -->
+            <div class="step" id="step-1">
+                <div class="step-header">
+                    <span class="step-num">1</span>
+                    <span class="step-label">Largura da janela</span>
+                </div>
+                <div class="measurement-input">
+                    <input type="number" id="janela-width" placeholder="Ex: 2.00" step="0.1" min="0.1" aria-label="Largura da janela">
+                    <select id="medida-unidade" aria-label="Unidade de medida">
+                        <option value="m">Metros</option>
+                        <option value="cm">cm</option>
+                    </select>
+                </div>
+                <div class="result-box" id="resultado-medida">
+                    <div class="result-box-title">Kit recomendado</div>
+                    <div class="result-recommended">Varão de <strong id="varao-recomendado">2,40mt</strong></div>
+                    <div class="result-kit">
+                        <span id="qtd-barras">2 barras de 1,20 mt</span> · <span id="qtd-suportes">3 suportes</span> · 2 ponteiras
+                    </div>
+                    <div class="result-warning" id="aviso-maximo">⚠ Medida acima de 4m: recomendamos múltiplos kits.</div>
+                </div>
+            </div>
+
+            <!-- Step 2: Espessura -->
+            <div class="step" id="step-2">
+                <div class="step-header">
+                    <span class="step-num">2</span>
+                    <span class="step-label">Espessura</span>
+                </div>
+                <div class="diam-grid">
+                    <button class="opt-btn active" data-size="19" aria-pressed="true">
+                        19mm
+                        <span class="opt-sub">Janelas até 3m · mais leve</span>
+                    </button>
+                    <button class="opt-btn" data-size="28" aria-pressed="false">
+                        28mm
+                        <span class="opt-sub">Blackout pesado · +3m</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Suporte -->
+            <div class="step" id="step-3">
+                <div class="step-header">
+                    <span class="step-num">3</span>
+                    <span class="step-label">Tipo de suporte</span>
+                </div>
+                <div class="diam-grid">
+                    <button class="opt-btn support-btn active" data-support="1p" aria-pressed="true">
+                        1 furo
+                        <span class="opt-sub">Simples · instalação rápida</span>
+                    </button>
+                    <button class="opt-btn support-btn" data-support="2p" aria-pressed="false">
+                        2 furos
+                        <span class="opt-sub">Duplo · fixação extra</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Cor -->
+            <div class="step" id="step-4">
+                <div class="step-header">
+                    <span class="step-num">4</span>
+                    <span class="step-label">Cor</span>
+                </div>
+                <div class="color-grid">
+                    <button class="color-btn c-branco active"     data-color="branco"    title="Branco"    aria-label="Branco"    aria-pressed="true"></button>
+                    <button class="color-btn c-preto"             data-color="preto"     title="Preto"     aria-label="Preto"     aria-pressed="false"></button>
+                    <button class="color-btn c-titanio"           data-color="titanio"   title="Titânio"   aria-label="Titânio"   aria-pressed="false"></button>
+                    <button class="color-btn c-cerejeira"         data-color="cerejeira" title="Cerejeira" aria-label="Cerejeira" aria-pressed="false"></button>
+                    <button class="color-btn c-imbuia"            data-color="imbuia"    title="Imbuia"    aria-label="Imbuia"    aria-pressed="false"></button>
+                    <button class="color-btn c-ouro_velho"        data-color="ouro_velho" title="Ouro Velho" aria-label="Ouro Velho" aria-pressed="false"></button>
+                    <button class="color-btn c-mogno"             data-color="mogno"     title="Mogno"     aria-label="Mogno"     aria-pressed="false"></button>
+                    <button class="color-btn c-azul"              data-color="azul"      title="Azul"      aria-label="Azul"      aria-pressed="false"></button>
+                    <button class="color-btn c-rosa"              data-color="rosa"      title="Rosa"      aria-label="Rosa"      aria-pressed="false"></button>
+                    <button class="color-btn c-verde"             data-color="verde"     title="Verde"     aria-label="Verde"     aria-pressed="false"></button>
+                    <button class="color-btn c-palha"             data-color="palha"     title="Palha"     aria-label="Palha"     aria-pressed="false"></button>
+                    <button class="color-btn c-marfim"            data-color="marfim"    title="Marfim"    aria-label="Marfim"    aria-pressed="false"></button>
+                </div>
+                <span class="color-label" id="color-label-text">Branco</span>
+            </div>
+
+        </div><!-- /panel-body -->
+
+        <!-- Footer CTAs -->
+        <div class="panel-footer">
+            <div class="footer-label">Compre o modelo configurado</div>
+
+            <a id="shopee-btn"
+               href="https://shopee.com.br/fwcsolucoesemmanutencaoltda?entryPoint=ShopBySearch&searchKeyword=f.w.c"
+               target="_blank" rel="noopener"
+               class="buy-btn btn-shopee">
+                <iconify-icon icon="simple-icons:shopee" aria-hidden="true"></iconify-icon>
+                Comprar na Shopee
+            </a>
+
+            <a id="tiktok-btn"
+               href="https://vt.tiktok.com/ZSxE3QPh8/?page=TikTokShop"
+               target="_blank" rel="noopener"
+               class="buy-btn btn-tiktok">
+                <iconify-icon icon="simple-icons:tiktok" aria-hidden="true"></iconify-icon>
+                TikTok Shop
+            </a>
+
+            <div class="divider"></div>
+
+            <button id="whatsapp-share-btn" class="buy-btn btn-whatsapp">
+                <iconify-icon icon="simple-icons:whatsapp" aria-hidden="true"></iconify-icon>
+                Compartilhar no WhatsApp
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- Modal QR Code -->
+    <div class="modal-overlay" id="qr-modal" aria-hidden="true">
+        <div class="modal-content">
+            <h2 class="modal-title">Abra no Celular</h2>
+            <p class="modal-text">A loja do TikTok Shop funciona apenas em dispositivos móveis. Escaneie o QR code com a câmera do seu celular para continuar.</p>
+            <div class="qr-box">
+                <img id="qr-image" src="" alt="QR Code TikTok">
+            </div>
+            <button class="modal-close" id="close-qr">Fechar</button>
+        </div>
+    </div>
+
+</div><!-- /app -->
+
+<!-- Three.js Import Map -->
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// Setup básico da Cena
+const canvas = document.querySelector('#webgl-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+
+// Câmera
+const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+camera.position.set(0, 0, 4);
+
+// Controles
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.enablePan = false;
+controls.minDistance = 1;
+controls.maxDistance = 10;
+
+// Desativa o zoom automático se o usuário interagir com o controle
+controls.addEventListener('start', () => { autoAdjustCamera = false; });
+renderer.domElement.addEventListener('wheel', () => { autoAdjustCamera = false; });
+renderer.domElement.addEventListener('touchstart', () => { autoAdjustCamera = false; });
+
+// Iluminação Realista (PBR)
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+dirLight.position.set(5, 5, 4);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.width = 2048;
+dirLight.shadow.mapSize.height = 2048;
+scene.add(dirLight);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+scene.add(ambientLight);
+
+// Lógica de Configuração Atual (Física Elástica)
+let targetLength = 2.4;
+let currentLength = 2.4;
+let autoAdjustCamera = true;
+let targetDiameter = 0.019;
+let currentDiameter = 0.019;
+let currentColor = 'branco';
+let currentSupportType = '1p';
+let targetBrackets = 3;
+let currentBrackets = 3;
+
+// Referências Persistentes aos Objetos 3D
+let rodMesh = null;
+let leftFinial = null;
+let rightFinial = null;
+let bracketsArray = [];
+
+// Materiais Físicos de Alta Qualidade
+const materials = {
+    'azul': new THREE.MeshStandardMaterial({ color: 0x85b8eb, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'branco': new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'cerejeira': new THREE.MeshStandardMaterial({ color: 0xbb7b01, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'imbuia': new THREE.MeshStandardMaterial({ color: 0x351f14, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'marfim': new THREE.MeshStandardMaterial({ color: 0xcec741, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'mogno': new THREE.MeshStandardMaterial({ color: 0x870d13, metalness: 0.1, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'ouro_velho': new THREE.MeshStandardMaterial({ color: 0x4f3b11, metalness: 0.8, roughness: 0.3, envMapIntensity: 1.0, side: THREE.DoubleSide }),
+    'palha': new THREE.MeshStandardMaterial({ color: 0xddd57c, metalness: 0.1, roughness: 0.5, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'preto': new THREE.MeshStandardMaterial({ color: 0x1b1619, metalness: 0.3, roughness: 0.6, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'rosa': new THREE.MeshStandardMaterial({ color: 0xe49bc9, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide }),
+    'titanio': new THREE.MeshStandardMaterial({ color: 0x9e9fa4, metalness: 0.8, roughness: 0.2, envMapIntensity: 1.0, side: THREE.DoubleSide }),
+    'verde': new THREE.MeshStandardMaterial({ color: 0xa7e2b5, metalness: 0.1, roughness: 0.4, envMapIntensity: 0.5, side: THREE.DoubleSide })
+};
+
+let varaoGroup = new THREE.Group();
+scene.add(varaoGroup);
+
+function rebuildGeometries() {
+    // Limpa o modelo atual completamente quando mudamos diâmetro ou cor (que são mudanças raras/pesadas)
+    while(varaoGroup.children.length > 0){ 
+        const child = varaoGroup.children[0];
+        if(child.geometry) child.geometry.dispose();
+        varaoGroup.remove(child); 
+    }
+    bracketsArray = [];
+
+    const material = materials[currentColor];
+    const rodRadius = targetDiameter / 2;
+
+    // Tubo Principal (Criado com tamanho 1 e escalado via Y=Length, oco/aberto nas pontas)
+    const geometry = new THREE.CylinderGeometry(rodRadius, rodRadius, 1, 128, 1, true);
+    rodMesh = new THREE.Mesh(geometry, material);
+    rodMesh.rotation.z = Math.PI / 2;
+    rodMesh.castShadow = true;
+    rodMesh.receiveShadow = true;
+    varaoGroup.add(rodMesh);
+
+    // Ponteiras (Dedal)
+    const points = [];
+    const r = rodRadius;
+    const L = targetDiameter * 1.2; 
+    points.push(new THREE.Vector2(r, 0)); 
+    points.push(new THREE.Vector2(r * 1.4, 0)); 
+    points.push(new THREE.Vector2(r * 1.4, L * 0.15)); 
+    points.push(new THREE.Vector2(r * 1.2, L * 0.25)); 
+    points.push(new THREE.Vector2(r * 1.2, L * 0.5)); 
+    points.push(new THREE.Vector2(r * 1.12, L * 0.5)); 
+    points.push(new THREE.Vector2(r * 1.12, L * 0.75)); 
+    points.push(new THREE.Vector2(r * 0.9, L * 0.9)); 
+    points.push(new THREE.Vector2(r * 0.5, L * 0.98)); 
+    points.push(new THREE.Vector2(0, L)); 
+    const finialGeometry = new THREE.LatheGeometry(points, 64);
+    
+    leftFinial = new THREE.Mesh(finialGeometry, material);
+    leftFinial.rotation.z = Math.PI / 2;
+    leftFinial.castShadow = true;
+    leftFinial.receiveShadow = true;
+    varaoGroup.add(leftFinial);
+
+    rightFinial = new THREE.Mesh(finialGeometry, material);
+    rightFinial.rotation.z = -Math.PI / 2;
+    rightFinial.castShadow = true;
+    rightFinial.receiveShadow = true;
+    varaoGroup.add(rightFinial);
+
+    // Pré-criação de um pool de suportes (até 10 para lidar com tamanhos grandes)
+    for (let i = 0; i < 10; i++) {
+        const group = new THREE.Group();
+        
+        const ringThickness = targetDiameter * 0.15;
+        const ringRadius = rodRadius + ringThickness;
+        
+        // Novo anel em formato de "C" (Aberto em cima/frente)
+        const ringGeo = new THREE.TorusGeometry(ringRadius, ringThickness, 32, 64, Math.PI * 1.3);
+        const ring = new THREE.Mesh(ringGeo, material);
+        ring.rotation.y = Math.PI / 2;
+        ring.rotation.x = Math.PI * 0.85; // Ajuste para deixar a abertura virada para cima/frente
+        
+        // Arredondando as pontas do C (pontas injetadas suaves)
+        const sphereGeo = new THREE.SphereGeometry(ringThickness, 16, 16);
+        const sphere1 = new THREE.Mesh(sphereGeo, material);
+        sphere1.position.set(ringRadius, 0, 0); 
+        ring.add(sphere1);
+        
+        const sphere2 = new THREE.Mesh(sphereGeo, material);
+        const endAngle = Math.PI * 1.3;
+        sphere2.position.set(ringRadius * Math.cos(endAngle), ringRadius * Math.sin(endAngle), 0);
+        ring.add(sphere2);
+        
+        ring.castShadow = true;
+        ring.receiveShadow = true;
+        group.add(ring);
+        
+        const stalkLength = 0.08; 
+        
+        // Nova haste cônica (base mais grossa, topo mais fino)
+        const stalkGeo = new THREE.CylinderGeometry(0.008, 0.018, stalkLength, 32);
+        const stalk = new THREE.Mesh(stalkGeo, material);
+        stalk.rotation.x = Math.PI / 2;
+        stalk.position.set(0, 0, -stalkLength / 2 - rodRadius);
+        stalk.castShadow = true;
+        stalk.receiveShadow = true;
+        group.add(stalk);
+        
+        let baseGroup = new THREE.Group();
+        if (currentSupportType === '1p') {
+            // Suporte 1p: Base circular oca com duto central
+            const radius = 0.025; // raio da base circular
+            const wall = 0.002; // espessura da parede da base
+            
+            // 1. Casca Externa (Cilindro Oco)
+            const outerShape = new THREE.Shape();
+            outerShape.absarc(0, 0, radius, 0, Math.PI * 2, false);
+            
+            const innerShape = new THREE.Path();
+            innerShape.absarc(0, 0, radius - wall, 0, Math.PI * 2, false);
+            outerShape.holes.push(innerShape);
+            
+            const shellExtrudeSettings = { depth: 0.015, bevelEnabled: false };
+            const shellGeo = new THREE.ExtrudeGeometry(outerShape, shellExtrudeSettings);
+            shellGeo.center();
+            const shell = new THREE.Mesh(shellGeo, material);
+            baseGroup.add(shell);
+            
+            // 2. Placa Frontal com Furo Central Vazado
+            const frontShape = new THREE.Shape();
+            frontShape.absarc(0, 0, radius, 0, Math.PI * 2, false);
+            
+            const screwHole = new THREE.Path();
+            screwHole.absarc(0, 0, 0.0025, 0, Math.PI * 2, false);
+            frontShape.holes.push(screwHole);
+            
+            const frontExtrudeSettings = { depth: 0.002, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.0005, bevelThickness: 0.0005 };
+            const frontGeo = new THREE.ExtrudeGeometry(frontShape, frontExtrudeSettings);
+            frontGeo.center();
+            const frontPlate = new THREE.Mesh(frontGeo, material);
+            frontPlate.position.set(0, 0, 0.0075 + 0.001);
+            baseGroup.add(frontPlate);
+            
+            // 3. Duto do Parafuso Central (Pilar Vazado interno)
+            const postShape = new THREE.Shape();
+            postShape.absarc(0, 0, 0.0045, 0, Math.PI * 2, false);
+            const postHole = new THREE.Path();
+            postHole.absarc(0, 0, 0.0025, 0, Math.PI * 2, false);
+            postShape.holes.push(postHole);
+            
+            const postGeo = new THREE.ExtrudeGeometry(postShape, { depth: 0.015, bevelEnabled: false });
+            postGeo.center();
+            
+            const post = new THREE.Mesh(postGeo, material);
+            post.position.set(0, 0, 0); // No centro exato
+            baseGroup.add(post);
+            
+            // 4. Parafuso Metálico Embutido (Saindo pela parte de trás)
+            // Usamos uma textura ou simplesmente um material metálico claro
+            const screwGeo = new THREE.CylinderGeometry(0.002, 0.002, 0.04, 16);
+            const screwMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8, roughness: 0.4 });
+            const screwMesh = new THREE.Mesh(screwGeo, screwMat);
+            screwMesh.rotation.x = Math.PI / 2;
+            // A base termina em Z = -0.0075 (local), então o parafuso começa dali para trás
+            screwMesh.position.set(0, 0, -0.0075 - 0.02); 
+            screwMesh.castShadow = true;
+            screwMesh.receiveShadow = true;
+            baseGroup.add(screwMesh);
+        } else {
+            // Suporte 2p: Estrutura CAD (Oca e Vazada)
+            const w = 0.030; // largura máxima
+            const h = 0.065; // altura total
+            const indent = 0.005; // curva para dentro nas laterais
+            const wall = 0.002; // espessura da parede da base
+            
+            // 1. Casca Externa (Parede Oca)
+            const outerShape = new THREE.Shape();
+            outerShape.moveTo(w/2, h/2);
+            outerShape.quadraticCurveTo((w/2) - indent, 0, w/2, -h/2);
+            outerShape.lineTo(-w/2, -h/2);
+            outerShape.quadraticCurveTo((-w/2) + indent, 0, -w/2, h/2);
+            outerShape.lineTo(w/2, h/2);
+            
+            const innerShape = new THREE.Path();
+            const iw = w - wall * 2;
+            const ih = h - wall * 2;
+            const iindent = indent * 0.8;
+            innerShape.moveTo(iw/2, ih/2);
+            innerShape.quadraticCurveTo((iw/2) - iindent, 0, iw/2, -ih/2);
+            innerShape.lineTo(-iw/2, -ih/2);
+            innerShape.quadraticCurveTo((-iw/2) + iindent, 0, -iw/2, ih/2);
+            innerShape.lineTo(iw/2, ih/2);
+            outerShape.holes.push(innerShape);
+            
+            const shellExtrudeSettings = { depth: 0.015, bevelEnabled: false };
+            const shellGeo = new THREE.ExtrudeGeometry(outerShape, shellExtrudeSettings);
+            shellGeo.center(); // centraliza no eixo Z também (-0.0075 a +0.0075)
+            const shell = new THREE.Mesh(shellGeo, material);
+            baseGroup.add(shell);
+            
+            // 2. Placa Frontal com Furos Atravessados
+            const frontShape = new THREE.Shape();
+            frontShape.moveTo(w/2, h/2);
+            frontShape.quadraticCurveTo((w/2) - indent, 0, w/2, -h/2);
+            frontShape.lineTo(-w/2, -h/2);
+            frontShape.quadraticCurveTo((-w/2) + indent, 0, -w/2, h/2);
+            frontShape.lineTo(w/2, h/2);
+            
+            const screwHole1 = new THREE.Path();
+            screwHole1.absarc(0, h/2 - 0.008, 0.0025, 0, Math.PI * 2, false);
+            frontShape.holes.push(screwHole1);
+            
+            const screwHole2 = new THREE.Path();
+            screwHole2.absarc(0, -h/2 + 0.008, 0.0025, 0, Math.PI * 2, false);
+            frontShape.holes.push(screwHole2);
+            
+            const frontExtrudeSettings = { depth: 0.002, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.0005, bevelThickness: 0.0005 };
+            const frontGeo = new THREE.ExtrudeGeometry(frontShape, frontExtrudeSettings);
+            frontGeo.center();
+            const frontPlate = new THREE.Mesh(frontGeo, material);
+            frontPlate.position.set(0, 0, 0.0075 + 0.001); // Encosta na frente da casca
+            baseGroup.add(frontPlate);
+            
+            // 3. Dutos dos Parafusos (Pilares Vazados)
+            const postShape = new THREE.Shape();
+            postShape.absarc(0, 0, 0.0045, 0, Math.PI * 2, false);
+            const postHole = new THREE.Path();
+            postHole.absarc(0, 0, 0.0025, 0, Math.PI * 2, false);
+            postShape.holes.push(postHole);
+            
+            const postGeo = new THREE.ExtrudeGeometry(postShape, { depth: 0.015, bevelEnabled: false });
+            postGeo.center();
+            
+            const post1 = new THREE.Mesh(postGeo, material);
+            post1.position.set(0, h/2 - 0.008, 0); // No eixo Z, como foi centrado, preenche exatamente o espaço interno da casca
+            const post2 = new THREE.Mesh(postGeo, material);
+            post2.position.set(0, -h/2 + 0.008, 0);
+            
+            baseGroup.add(post1);
+            baseGroup.add(post2);
         }
-    </script>
-    <script type="module" src="configurador.js"></script>
-
-    <!-- Rastreamento de Eventos - Meta Pixel -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cliques na Shopee
-            const shopeeLinks = document.querySelectorAll('a[href*="shopee.com.br"]');
-            shopeeLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (typeof fbq === 'function') {
-                        fbq('trackCustom', 'ClickShopee');
-                    }
-                });
-            });
-
-            // Cliques no TikTok Shop
-            const tiktokLinks = document.querySelectorAll('a[href*="tiktok.com"]');
-            tiktokLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (typeof fbq === 'function') {
-                        fbq('trackCustom', 'ClickTikTok');
-                    }
-                });
-            });
-
-            // Cliques no Botão de Compartilhar no WhatsApp
-            const whatsappBtn = document.getElementById('whatsapp-share-btn');
-            if (whatsappBtn) {
-                whatsappBtn.addEventListener('click', function() {
-                    if (typeof fbq === 'function') {
-                        fbq('trackCustom', 'ShareWhatsApp');
-                    }
-                });
+        
+        baseGroup.position.set(0, 0, -stalkLength - rodRadius);
+        baseGroup.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
             }
         });
-    </script>
+        group.add(baseGroup);
+
+        // Suportes nascem escondidos (escala 0)
+        group.scale.set(0, 0, 0);
+        varaoGroup.add(group);
+        bracketsArray.push(group);
+    }
+}
+
+// Inicializa o modelo
+rebuildGeometries();
+
+// Animação/Render Loop com Física Elástica (LERP)
+renderer.setAnimationLoop(animate);
+function animate(timestamp, frame) {
+    controls.update();
+    
+    // Lerp suave para o comprimento do varão (Efeito Elástico)
+    currentLength += (targetLength - currentLength) * 0.1;
+    
+    // Atualiza o 3D se os objetos já foram inicializados
+    if (rodMesh && leftFinial && rightFinial) {
+        // Estica o varão usando a escala Y (já que ele foi deitado em Z)
+        rodMesh.scale.y = currentLength;
+        
+        // Posiciona as ponteiras nas pontas esticadas
+        leftFinial.position.x = -currentLength / 2;
+        rightFinial.position.x = currentLength / 2;
+        
+        // Física dos suportes deslizando e "nascendo"
+        const padding = 0.05;
+        const startX = -currentLength / 2 + padding;
+        const endX = currentLength / 2 - padding;
+        const span = endX - startX;
+        
+        for (let i = 0; i < bracketsArray.length; i++) {
+            const bracket = bracketsArray[i];
+            
+            // Se o bracket deve existir nesta configuração (índice menor que o target)
+            if (i < targetBrackets) {
+                // Calcula a posição ideal que ele deve assumir
+                let targetX = 0;
+                if (targetBrackets > 1) {
+                    targetX = startX + (span / (targetBrackets - 1)) * i;
+                }
+                
+                // Desliza suavemente no eixo X
+                bracket.position.x += (targetX - bracket.position.x) * 0.1;
+                // Nasce suavemente (Scale 0 -> 1)
+                bracket.scale.x += (1 - bracket.scale.x) * 0.1;
+                bracket.scale.y += (1 - bracket.scale.y) * 0.1;
+                bracket.scale.z += (1 - bracket.scale.z) * 0.1;
+            } else {
+                // Se o bracket for excedente (ex: passou de 5 para 3 suportes), ele murcha e some
+                bracket.scale.x += (0 - bracket.scale.x) * 0.2;
+                bracket.scale.y += (0 - bracket.scale.y) * 0.2;
+                bracket.scale.z += (0 - bracket.scale.z) * 0.2;
+            }
+        }
+        
+        // Câmera afasta suavemente se o varão for muito grande
+        if (autoAdjustCamera) {
+            const targetCamZ = Math.max(3, currentLength * 1.2);
+            camera.position.z += (targetCamZ - camera.position.z) * 0.05;
+            if (Math.abs(targetCamZ - camera.position.z) < 0.01) {
+                autoAdjustCamera = false;
+            }
+        }
+    }
+
+    // Gira lentamente sozinho para demonstrar o material metálico
+    if (!controls.state && varaoGroup) {
+        varaoGroup.rotation.x += 0.002;
+    }
+
+
+
+    renderer.render(scene, camera);
+}
+
+// Responsividade
+window.addEventListener('resize', () => {
+    const container = document.querySelector('.canvas-area');
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+});
+
+// ==========================================
+// INTEGRAÇÃO COM A INTERFACE (DOM) E LINKS DINÂMICOS
+// ==========================================
+
+const colorNames = {
+    branco: 'Branco', preto: 'Preto', titanio: 'Titânio', cerejeira: 'Cerejeira',
+    imbuia: 'Imbuia', ouro_velho: 'Ouro Velho', mogno: 'Mogno', azul: 'Azul',
+    rosa: 'Rosa', verde: 'Verde', palha: 'Palha', marfim: 'Marfim'
+};
+
+function updateStoreLinks() {
+    const shopeeBtn = document.getElementById('shopee-btn');
+    if (!shopeeBtn || !targetLength) return;
+    
+    const espessura = targetDiameter === 0.019 ? '19mm' : '28mm';
+    const cor = colorNames[currentColor] || currentColor;
+    const tamanho = targetLength.toFixed(2).replace('.', ',') + 'm';
+    
+    // Constrói o termo de busca dinâmico para a Shopee
+    const keyword = `varao ${tamanho} ${cor} ${espessura}`;
+    
+    shopeeBtn.href = `https://shopee.com.br/fwcsolucoesemmanutencaoltda?entryPoint=ShopBySearch&searchKeyword=${encodeURIComponent(keyword)}`;
+}
+
+// 1. Calculadora de Tamanho
+const inputJanela = document.getElementById('janela-width');
+const selectUnidade = document.getElementById('medida-unidade');
+const divResultado = document.getElementById('resultado-medida');
+const textVarao = document.getElementById('varao-recomendado');
+
+function calcularMedida() {
+    let janela = parseFloat(inputJanela.value);
+    
+    if (janela > 0) {
+        // Se a unidade for centímetros, converte para metros
+        if (selectUnidade.value === 'cm') {
+            janela = janela / 100;
+        }
+
+        // Cálculo da medida ideal: Largura da janela + 20cm de cada lado (total + 40cm)
+        const ideal = janela + 0.4;
+        
+        // Kits padrão fornecidos pela fábrica
+        const kits = [
+            { size: 1.0, barsText: "1 barra de 1 mt", brackets: 2 },
+            { size: 1.5, barsText: "2 barras de 75 cm", brackets: 3 },
+            { size: 2.0, barsText: "2 barras de 1 mt", brackets: 3 },
+            { size: 2.4, barsText: "2 barras de 1,20 mt", brackets: 3 },
+            { size: 3.0, barsText: "3 barras de 1 mt", brackets: 4 },
+            { size: 3.6, barsText: "3 barras de 1,20 mt", brackets: 4 },
+            { size: 4.0, barsText: "4 barras de 1 mt", brackets: 5 }
+        ];
+
+        let selectedKit = null;
+        let exceeded = false;
+
+        // Encontra o menor kit padrão que atenda à medida ideal
+        for (const kit of kits) {
+            if (kit.size >= ideal) {
+                selectedKit = kit;
+                break;
+            }
+        }
+
+        // Se passar do kit máximo de 4m
+        if (!selectedKit) {
+            selectedKit = kits[kits.length - 1]; // Usa os specs de 4m para renderizar no 3D
+            exceeded = true;
+        }
+
+        const formattedSize = selectedKit.size.toFixed(2).replace('.', ',') + 'mt';
+        textVarao.innerText = formattedSize;
+        
+        document.getElementById('qtd-barras').innerText = selectedKit.barsText;
+        document.getElementById('qtd-suportes').innerText = selectedKit.brackets + " suportes";
+        document.getElementById('aviso-maximo').style.display = exceeded ? 'block' : 'none';
+
+        divResultado.style.display = 'block';
+        document.getElementById('live-length').textContent = formattedSize;
+
+        // Atualiza 3D
+        targetLength = selectedKit.size;
+        targetBrackets = selectedKit.brackets;
+        autoAdjustCamera = true;
+        updateStoreLinks();
+    } else {
+        divResultado.style.display = 'none';
+        document.getElementById('live-length').textContent = '2,40 mt';
+        currentLength = 2.4; // Default
+        currentBrackets = 3;
+        rebuildGeometries();
+        autoAdjustCamera = true;
+        updateStoreLinks();
+    }
+}
+
+inputJanela.addEventListener('input', calcularMedida);
+selectUnidade.addEventListener('change', () => {
+    // Ajusta o placeholder para a unidade escolhida
+    inputJanela.placeholder = selectUnidade.value === 'm' ? 'Ex: 2.00' : 'Ex: 200';
+    calcularMedida();
+});
+
+// 2. Mudança de Cor
+document.querySelectorAll('.color-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Atualiza UI
+        document.querySelectorAll('.color-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
+        
+        // Pega o botão (pode ser o target ou o elemento clicado se tiver ícone)
+        const targetBtn = e.target.closest('.color-btn');
+        if(!targetBtn) return;
+        
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-pressed', 'true');
+
+        // Atualiza a Cor e reconstrói as geometrias
+        currentColor = targetBtn.getAttribute('data-color');
+        document.getElementById('color-label-text').textContent = colorNames[currentColor] || currentColor;
+        
+        rebuildGeometries();
+        updateStoreLinks();
+    });
+});
+
+// 3. Mudança de Espessura
+document.querySelectorAll('.opt-btn:not(.support-btn)').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Atualiza UI
+        document.querySelectorAll('.opt-btn:not(.support-btn)').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
+        
+        const targetBtn = e.target.closest('.opt-btn');
+        if(!targetBtn) return;
+        
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-pressed', 'true');
+
+        // Atualiza a Espessura e reconstrói as geometrias
+        const sizeMM = parseInt(targetBtn.getAttribute('data-size'));
+        targetDiameter = sizeMM / 1000;
+        rebuildGeometries();
+        updateStoreLinks();
+    });
+});
+
+// 4. Mudança de Tipo de Suporte
+document.querySelectorAll('.support-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Atualiza UI
+        document.querySelectorAll('.support-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
+        
+        const targetBtn = e.target.closest('.support-btn');
+        if(!targetBtn) return;
+        
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-pressed', 'true');
+
+        // Atualiza o tipo de suporte e reconstrói as geometrias
+        currentSupportType = targetBtn.getAttribute('data-support');
+        rebuildGeometries();
+        updateStoreLinks();
+    });
+});
+
+// Atualiza o link pela primeira vez no carregamento
+updateStoreLinks();
+
+// Resolve problema de links do TikTok no Desktop (about:blank) via Modal QR Code
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+if (!isMobile) {
+    const tiktokBtn = document.getElementById('tiktok-btn');
+    const qrModal = document.getElementById('qr-modal');
+    const closeQr = document.getElementById('close-qr');
+    const qrImage = document.getElementById('qr-image');
+
+    if (tiktokBtn && qrModal && closeQr && qrImage) {
+        tiktokBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Impede de abrir o link que dá erro no desktop
+            
+            // Pega a URL que seria acessada (já com ou sem parâmetros, no caso o link principal)
+            const url = tiktokBtn.href;
+            
+            // Gera o QR code na hora usando a API
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`;
+            qrModal.classList.add('active');
+        });
+
+        // Fechar o Modal
+        closeQr.addEventListener('click', () => qrModal.classList.remove('active'));
+        qrModal.addEventListener('click', (e) => {
+            if (e.target === qrModal) qrModal.classList.remove('active');
+        });
+    }
+}
+
+// 5. Compartilhamento via WhatsApp
+const whatsappBtn = document.getElementById('whatsapp-share-btn');
+if (whatsappBtn) {
+    whatsappBtn.addEventListener('click', () => {
+        const cor = colorNames[currentColor] || currentColor;
+        const espessura = Math.round(targetDiameter * 1000) + 'mm';
+        const suporte = currentSupportType === '1p' ? '1 Furo' : '2 Furos';
+        const tamanho = document.getElementById('live-length').textContent;
+        
+        let texto = `*Acabei de configurar meu varão de cortina ideal!* 🤩🏡\n\n`;
+        texto += `✅ *Tamanho:* ${tamanho}\n`;
+        texto += `✅ *Cor:* ${cor}\n`;
+        texto += `✅ *Espessura:* ${espessura}\n`;
+        texto += `✅ *Suporte:* ${suporte}\n\n`;
+        texto += `Monte o seu no simulador 3D da F.W.C Soluções 👇\n`;
+        texto += `🔗 https://fwcsolucoes.vercel.app/configurador.html`;
+
+        const encodedText = encodeURIComponent(texto);
+        window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+    });
+}
+</script>
+
+
 </body>
 </html>

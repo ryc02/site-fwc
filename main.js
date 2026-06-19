@@ -239,8 +239,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     if (!isMobile) {
         const tiktokLinks = document.querySelectorAll('a[href*="vt.tiktok.com"]');
-        tiktokLinks.forEach(link => {
-            link.href = "https://www.tiktok.com/@fwcsolucoes";
-        });
+        const qrModal = document.getElementById('qr-modal');
+        const closeQr = document.getElementById('close-qr');
+        const qrImage = document.getElementById('qr-image');
+
+        if (tiktokLinks.length > 0 && qrModal && closeQr && qrImage) {
+            tiktokLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = link.href;
+                    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`;
+                    qrModal.classList.add('active');
+                });
+            });
+
+            closeQr.addEventListener('click', () => qrModal.classList.remove('active'));
+            qrModal.addEventListener('click', (e) => {
+                if (e.target === qrModal) qrModal.classList.remove('active');
+            });
+        }
     }
 });

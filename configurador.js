@@ -391,7 +391,7 @@ function animate(timestamp, frame) {
 
 // Responsividade
 window.addEventListener('resize', () => {
-    const container = document.querySelector('.canvas-container');
+    const container = document.querySelector('.canvas-area');
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
@@ -401,27 +401,18 @@ window.addEventListener('resize', () => {
 // INTEGRAÇÃO COM A INTERFACE (DOM) E LINKS DINÂMICOS
 // ==========================================
 
+const colorNames = {
+    branco: 'Branco', preto: 'Preto', titanio: 'Titânio', cerejeira: 'Cerejeira',
+    imbuia: 'Imbuia', ouro_velho: 'Ouro Velho', mogno: 'Mogno', azul: 'Azul',
+    rosa: 'Rosa', verde: 'Verde', palha: 'Palha', marfim: 'Marfim'
+};
+
 function updateStoreLinks() {
     const shopeeBtn = document.getElementById('shopee-btn');
     if (!shopeeBtn || !targetLength) return;
-
-    const corMap = {
-        'azul': 'Azul',
-        'branco': 'Branco',
-        'cerejeira': 'Cerejeira',
-        'imbuia': 'Imbuia',
-        'marfim': 'Marfim',
-        'mogno': 'Mogno',
-        'ouro_velho': 'Ouro Velho',
-        'palha': 'Palha',
-        'preto': 'Preto',
-        'rosa': 'Rosa',
-        'titanio': 'Titânio',
-        'verde': 'Verde'
-    };
     
     const espessura = targetDiameter === 0.019 ? '19mm' : '28mm';
-    const cor = corMap[currentColor];
+    const cor = colorNames[currentColor] || currentColor;
     const tamanho = targetLength.toFixed(2).replace('.', ',') + 'm';
     
     // Constrói o termo de busca dinâmico para a Shopee
@@ -484,15 +475,16 @@ function calcularMedida() {
         document.getElementById('aviso-maximo').style.display = exceeded ? 'block' : 'none';
 
         divResultado.style.display = 'block';
+        document.getElementById('live-length').textContent = formattedSize;
 
         // Atualiza 3D
-        // Atualiza as variáveis de Alvo (Target) para a Física agir
         targetLength = selectedKit.size;
         targetBrackets = selectedKit.brackets;
         autoAdjustCamera = true;
         updateStoreLinks();
     } else {
         divResultado.style.display = 'none';
+        document.getElementById('live-length').textContent = '2,40 mt';
         currentLength = 2.4; // Default
         currentBrackets = 3;
         rebuildGeometries();
@@ -512,25 +504,44 @@ selectUnidade.addEventListener('change', () => {
 document.querySelectorAll('.color-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         // Atualiza UI
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
+        document.querySelectorAll('.color-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
+        
+        // Pega o botão (pode ser o target ou o elemento clicado se tiver ícone)
+        const targetBtn = e.target.closest('.color-btn');
+        if(!targetBtn) return;
+        
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-pressed', 'true');
 
         // Atualiza a Cor e reconstrói as geometrias
-        currentColor = e.target.getAttribute('data-color');
+        currentColor = targetBtn.getAttribute('data-color');
+        document.getElementById('color-label-text').textContent = colorNames[currentColor] || currentColor;
+        
         rebuildGeometries();
         updateStoreLinks();
     });
 });
 
 // 3. Mudança de Espessura
-document.querySelectorAll('.size-btn:not(.support-btn)').forEach(btn => {
+document.querySelectorAll('.opt-btn:not(.support-btn)').forEach(btn => {
     btn.addEventListener('click', (e) => {
         // Atualiza UI
-        document.querySelectorAll('.size-btn:not(.support-btn)').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
+        document.querySelectorAll('.opt-btn:not(.support-btn)').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
+        
+        const targetBtn = e.target.closest('.opt-btn');
+        if(!targetBtn) return;
+        
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-pressed', 'true');
 
         // Atualiza a Espessura e reconstrói as geometrias
-        const sizeMM = parseInt(e.target.getAttribute('data-size'));
+        const sizeMM = parseInt(targetBtn.getAttribute('data-size'));
         targetDiameter = sizeMM / 1000;
         rebuildGeometries();
         updateStoreLinks();
@@ -541,11 +552,19 @@ document.querySelectorAll('.size-btn:not(.support-btn)').forEach(btn => {
 document.querySelectorAll('.support-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         // Atualiza UI
-        document.querySelectorAll('.support-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
+        document.querySelectorAll('.support-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
+        
+        const targetBtn = e.target.closest('.support-btn');
+        if(!targetBtn) return;
+        
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-pressed', 'true');
 
         // Atualiza o tipo de suporte e reconstrói as geometrias
-        currentSupportType = e.target.getAttribute('data-support');
+        currentSupportType = targetBtn.getAttribute('data-support');
         rebuildGeometries();
         updateStoreLinks();
     });
@@ -567,15 +586,17 @@ if (!isMobile) {
 const whatsappBtn = document.getElementById('whatsapp-share-btn');
 if (whatsappBtn) {
     whatsappBtn.addEventListener('click', () => {
-        const cor = currentColor.charAt(0).toUpperCase() + currentColor.slice(1).replace('_', ' ');
+        const cor = colorNames[currentColor] || currentColor;
         const espessura = Math.round(targetDiameter * 1000) + 'mm';
         const suporte = currentSupportType === '1p' ? '1 Furo' : '2 Furos';
+        const tamanho = document.getElementById('live-length').textContent;
         
-        let texto = `*Acabei de simular o varão de cortina ideal para minha casa!* 🤩🏡\n\n`;
+        let texto = `*Acabei de configurar meu varão de cortina ideal!* 🤩🏡\n\n`;
+        texto += `✅ *Tamanho:* ${tamanho}\n`;
         texto += `✅ *Cor:* ${cor}\n`;
         texto += `✅ *Espessura:* ${espessura}\n`;
         texto += `✅ *Suporte:* ${suporte}\n\n`;
-        texto += `Dá uma olhada em como ficou ou monte o seu no simulador oficial da F.W.C Soluções 👇\n\n`;
+        texto += `Monte o seu no simulador 3D da F.W.C Soluções 👇\n`;
         texto += `🔗 https://fwcsolucoes.vercel.app/configurador.html`;
 
         const encodedText = encodeURIComponent(texto);
