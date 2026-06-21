@@ -384,6 +384,8 @@ function animate(timestamp, frame) {
         varaoGroup.rotation.x += 0.002;
     }
 
+
+
     renderer.render(scene, camera);
 }
 
@@ -507,14 +509,12 @@ function calcularMedida() {
     }
 }
 
-if(inputJanela && selectUnidade) {
-    inputJanela.addEventListener('input', calcularMedida);
-    selectUnidade.addEventListener('change', () => {
-        // Ajusta o placeholder para a unidade escolhida
-        inputJanela.placeholder = selectUnidade.value === 'm' ? 'Ex: 2.00' : 'Ex: 200';
-        calcularMedida();
-    });
-}
+inputJanela.addEventListener('input', calcularMedida);
+selectUnidade.addEventListener('change', () => {
+    // Ajusta o placeholder para a unidade escolhida
+    inputJanela.placeholder = selectUnidade.value === 'm' ? 'Ex: 2.00' : 'Ex: 200';
+    calcularMedida();
+});
 
 // 2. Mudança de Cor
 const colorHintEl = document.getElementById('color-hint-text');
