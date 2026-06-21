@@ -1,1 +1,1 @@
-{"buildCommand": "npm run build", "outputDirectory": ".", "framework": null}
+{ "buildCommand": "npm run build", "outputDirectory": ".", "framework": null, "rewrites": [ { "source": "/admin/(.*)", "destination": "/admin/index.html" } ] }
