@@ -3,7 +3,7 @@
    Foco: Conversão + Diferenciação
    ============================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&display=swap');
+/* Fonts are loaded non-blocking via <link> in HTML */
 
 /* === TOKENS === */
 :root {
@@ -17,8 +17,8 @@
     --clr-accent: #B87333;       /* Cobre vivo — cor dos varões */
     --clr-accent-dark: #8F5620;
     --clr-accent-light: #F5E6D3;
-    --clr-cta: #E84E0E;          /* Laranja Shopee para CTA primário */
-    --clr-cta-dark: #C23D00;
+    --clr-cta: #CC3D00;          /* Laranja escurecido — passa no contraste WCAG AA com branco */
+    --clr-cta-dark: #A63200;
     --clr-success: #1C7C54;
 
     /* Typography */
@@ -909,19 +909,19 @@ strong { color: var(--clr-text); font-weight: 600; }
 }
 
 
-/* === MODAL QR CODE === */
+/* Modal usa o atributo HTML [hidden] — quando removido, o modal aparece */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
     z-index: 9999; display: flex; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity 0.3s;
 }
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-overlay:not([hidden]) { opacity: 1; pointer-events: auto; display: flex; }
 .modal-content {
     background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-lg);
     padding: 32px; text-align: center; max-width: 340px;
     transform: translateY(20px); transition: transform 0.3s;
 }
-.modal-overlay.active .modal-content { transform: translateY(0); }
+.modal-overlay:not([hidden]) .modal-content { transform: translateY(0); }
 .modal-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--clr-text); margin-bottom: 8px; font-weight: 400; }
 .modal-text { font-size: 0.85rem; color: var(--clr-text-muted); line-height: 1.5; margin-bottom: 24px; }
 .qr-box { background: white; padding: 16px; border-radius: 8px; display: inline-block; margin-bottom: 24px; }
